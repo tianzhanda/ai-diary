@@ -889,8 +889,9 @@ body {
   font-size: 0.58rem;
   padding: 1px 6px;
   border-radius: 3px;
-  background: var(--accent-green);
-  color: var(--bg-root);
+  background: transparent;
+  color: var(--accent-green);
+  border: 1px solid var(--accent-green);
   margin-left: 5px;
   vertical-align: middle;
 }
