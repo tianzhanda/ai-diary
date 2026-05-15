@@ -723,6 +723,13 @@ body {
   font-size: 0.85rem;
   line-height: 1.6;
 }
+.gt-container .gt-header-tip {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  color: var(--text-muted);
+  display: inline-flex;
+  align-items: center;
+}
 .gt-container .gt-header-controls {
   margin-top: 8px;
 }

@@ -271,6 +271,22 @@ function initGitalk() {
     language: "zh-CN",
   });
   gitalk.render("gitalk-container");
+
+  // Debounce like button to prevent negative counts
+  setTimeout(() => {
+    document.querySelector(".gt-container")?.addEventListener("click", (e) => {
+      const likeBtn = e.target.closest(".gt-comment-like");
+      if (!likeBtn || likeBtn.dataset.gtDebounce) return;
+      likeBtn.dataset.gtDebounce = "1";
+      likeBtn.style.pointerEvents = "none";
+      likeBtn.style.opacity = "0.5";
+      setTimeout(() => {
+        delete likeBtn.dataset.gtDebounce;
+        likeBtn.style.pointerEvents = "";
+        likeBtn.style.opacity = "";
+      }, 800);
+    });
+  }, 1500);
 }
 
 // ─── Search ───
