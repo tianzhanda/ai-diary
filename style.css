@@ -657,22 +657,6 @@ body {
   box-shadow: var(--shadow-sm);
 }
 
-.comments-header {
-  margin-bottom: 16px;
-  padding-bottom: 12px;
-  border-bottom: 1px solid var(--border-subtle);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.comments-title {
-  font-family: var(--font-mono);
-  font-size: 0.82rem;
-  font-weight: 600;
-  color: var(--text-primary);
-}
-
 .gitalk-container {
   min-height: 200px;
 }
