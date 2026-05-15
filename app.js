@@ -229,7 +229,7 @@ async function loadDiary(dateStr, signal) {
     if (diaryContent) diaryContent.innerHTML = `
       <div class="diary-empty">
         <div class="diary-empty-icon">📖</div>
-        <h2>这一天的日记尚未生成</h2>
+        <h2>${formatDateDisplay(dateStr)}的日记尚未生成</h2>
         <p>AI启智录每天23:00更新，届时请再来查看</p>
       </div>`;
     if (diaryFooter) diaryFooter.style.display = "none";

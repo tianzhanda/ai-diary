@@ -445,20 +445,11 @@ body {
 }
 
 .diary-date,
-.diary-date-value,
-.diary-model-value {
+.diary-date-meta {
   font-family: var(--font-mono);
-  font-size: 0.72rem;
-  color: var(--text-muted);
-}
-
-.diary-date-value {
+  font-size: 0.75rem;
   color: var(--text-secondary);
-}
-
-.diary-model-value {
-  color: var(--accent-green);
-  font-weight: 500;
+  font-weight: 600;
 }
 
 /* ── Diary Content Typography ── */
