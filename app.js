@@ -1,5 +1,8 @@
 // AI启智录 - 核心逻辑
 
+// ─── API Config ───
+const API_BASE = "https://ai-diary.3177981404.workers.dev";
+
 // ─── Giscus Config ───
 const GISCUS_REPO = "tianzhanda/tianzhanda.github.io";
 const GISCUS_REPO_ID = "R_kgDORbj5Tw";
@@ -8,7 +11,8 @@ const GISCUS_CATEGORY_ID = "DIC_kwDORbj5T84C9GAQ";
 
 const TODAY = getTodayStr();
 let currentDate = TODAY;
-let giscusLoaded = false;
+let diaryCache = {};     // { date: diary }
+let diaryDates = [];     // ["2026-05-15", ...]
 
 // ─── DOM refs ───
 const calendarTitle = document.getElementById("calendarTitle");
@@ -25,6 +29,50 @@ const diaryFooter = document.getElementById("diaryFooter");
 const sourceLinks = document.getElementById("sourceLinks");
 const modelName = document.getElementById("modelName");
 
+// ─── Data Loading ───
+async function loadAllData() {
+  try {
+    const resp = await fetch(`${API_BASE}/api/diaries`);
+    if (resp.ok) {
+      const list = await resp.json();
+      diaryDates = list.map(d => d.date).sort().reverse();
+      // Preload a few recent diaries
+      for (const item of list.slice(0, 5)) {
+        try {
+          const r = await fetch(`${API_BASE}/api/diary/${item.date}`);
+          if (r.ok) diaryCache[item.date] = await r.json();
+        } catch(e) {}
+      }
+    }
+  } catch(e) {
+    console.warn("API unavailable, using fallback data");
+    // Fallback to hardcoded data if available
+    if (typeof DIARY_DATA !== 'undefined') {
+      diaryDates = Object.keys(DIARY_DATA).sort().reverse();
+      diaryCache = DIARY_DATA;
+    }
+  }
+
+  initCalendar();
+  const initialDate = loadFromUrl();
+  currentDate = initialDate;
+  selectDate(initialDate);
+  renderCalendar();
+}
+
+async function fetchDiary(dateStr) {
+  if (diaryCache[dateStr]) return diaryCache[dateStr];
+  try {
+    const resp = await fetch(`${API_BASE}/api/diary/${dateStr}`);
+    if (resp.ok) {
+      const diary = await resp.json();
+      diaryCache[dateStr] = diary;
+      return diary;
+    }
+  } catch(e) {}
+  return null;
+}
+
 // ─── Helpers ───
 function getTodayStr() {
   const d = new Date();
@@ -38,8 +86,8 @@ function formatDateDisplay(dateStr) {
   return `${y}年${parseInt(m)}月${parseInt(d)}日 星期${weekdays[dayOfWeek]}`;
 }
 
-function getDiaryKeys() {
-  return Object.keys(DIARY_DATA).sort().reverse();
+function getDiarySet() {
+  return new Set(diaryDates);
 }
 
 // ─── Calendar ───
@@ -49,7 +97,6 @@ function initCalendar() {
   const now = new Date();
   currentYear = now.getFullYear();
   currentMonth = now.getMonth();
-  renderCalendar();
 }
 
 function renderCalendar() {
@@ -59,14 +106,14 @@ function renderCalendar() {
   const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
   const daysInPrev = new Date(currentYear, currentMonth, 0).getDate();
 
-  const diaryKeys = new Set(getDiaryKeys());
+  const diarySet = getDiarySet();
   let html = "";
 
   // Previous month days
   for (let i = firstDay - 1; i >= 0; i--) {
     const day = daysInPrev - i;
     const dateStr = `${prevMonthYear()}-${String(prevMonthNum()).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
-    html += `<div class="cal-day other-month ${diaryKeys.has(dateStr) ? 'has-diary' : ''}" data-date="${dateStr}">${day}</div>`;
+    html += `<div class="cal-day other-month ${diarySet.has(dateStr) ? 'has-diary' : ''}" data-date="${dateStr}">${day}</div>`;
   }
 
   // Current month days
@@ -74,7 +121,7 @@ function renderCalendar() {
     const dateStr = `${currentYear}-${String(currentMonth + 1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
     const isToday = dateStr === TODAY;
     const isSelected = dateStr === currentDate;
-    const hasDiary = diaryKeys.has(dateStr);
+    const hasDiary = diarySet.has(dateStr);
     let cls = isToday ? "today" : "";
     cls += isSelected ? " selected" : "";
     cls += hasDiary ? " has-diary" : "";
@@ -86,7 +133,7 @@ function renderCalendar() {
   const remaining = (7 - totalCells % 7) % 7;
   for (let d = 1; d <= remaining; d++) {
     const dateStr = `${nextMonthYear()}-${String(nextMonthNum()).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
-    html += `<div class="cal-day other-month ${diaryKeys.has(dateStr) ? 'has-diary' : ''}" data-date="${dateStr}">${d}</div>`;
+    html += `<div class="cal-day other-month ${diarySet.has(dateStr) ? 'has-diary' : ''}" data-date="${dateStr}">${d}</div>`;
   }
 
   calendarGrid.innerHTML = html;
@@ -95,24 +142,14 @@ function renderCalendar() {
   document.querySelectorAll(".cal-day").forEach(el => {
     el.addEventListener("click", () => {
       const date = el.dataset.date;
-      if (date) {
-        selectDate(date);
-      }
+      if (date) selectDate(date);
     });
   });
 
-  function prevMonthYear() {
-    return currentMonth === 0 ? currentYear - 1 : currentYear;
-  }
-  function prevMonthNum() {
-    return currentMonth === 0 ? 12 : currentMonth;
-  }
-  function nextMonthYear() {
-    return currentMonth === 11 ? currentYear + 1 : currentYear;
-  }
-  function nextMonthNum() {
-    return currentMonth === 11 ? 1 : currentMonth + 2;
-  }
+  function prevMonthYear() { return currentMonth === 0 ? currentYear - 1 : currentYear; }
+  function prevMonthNum() { return currentMonth === 0 ? 12 : currentMonth; }
+  function nextMonthYear() { return currentMonth === 11 ? currentYear + 1 : currentYear; }
+  function nextMonthNum() { return currentMonth === 11 ? 1 : currentMonth + 2; }
 }
 
 prevMonthBtn.addEventListener("click", () => {
@@ -136,17 +173,16 @@ todayBtn.addEventListener("click", () => {
 });
 
 // ─── Select date and load diary ───
-function selectDate(dateStr) {
+async function selectDate(dateStr) {
   currentDate = dateStr;
-  renderCalendar(); // Re-render to update selected state
-
-  loadDiary(dateStr);
+  renderCalendar();
+  await loadDiary(dateStr);
   updateGiscus(dateStr);
   updateUrl(dateStr);
 }
 
-function loadDiary(dateStr) {
-  const diary = DIARY_DATA[dateStr];
+async function loadDiary(dateStr) {
+  const diary = await fetchDiary(dateStr);
 
   if (!diary) {
     diaryTitle.textContent = "今日无记录";
@@ -165,7 +201,6 @@ function loadDiary(dateStr) {
   diaryDate.textContent = formatDateDisplay(dateStr);
   diaryContent.innerHTML = diary.content;
 
-  // Sources
   if (diary.sources && diary.sources.length > 0) {
     sourceLinks.innerHTML = diary.sources.map(s =>
       `<a href="${s.url}" target="_blank" class="source-link">${s.title}</a>`
@@ -178,8 +213,6 @@ function loadDiary(dateStr) {
 // ─── Giscus ───
 function updateGiscus(dateStr) {
   const container = document.getElementById("giscus-container");
-  // Giscus doesn't support SPA reload natively.
-  // We destroy and recreate the script with a new data-term.
   container.innerHTML = "";
 
   const script = document.createElement("script");
@@ -210,7 +243,7 @@ searchInput.addEventListener("input", (e) => {
   }
 
   const results = [];
-  for (const [date, diary] of Object.entries(DIARY_DATA)) {
+  for (const [date, diary] of Object.entries(diaryCache)) {
     const searchText = (diary.title + " " + stripHtml(diary.content)).toLowerCase();
     if (searchText.includes(query)) {
       results.push({ date, ...diary });
@@ -257,22 +290,10 @@ function updateUrl(dateStr) {
 function loadFromUrl() {
   const params = new URLSearchParams(window.location.search);
   const dateParam = params.get("date");
-  if (dateParam && DIARY_DATA[dateParam]) {
-    return dateParam;
-  }
-  // Default to the latest diary or today
-  const keys = getDiaryKeys();
-  if (keys.length > 0 && keys[0] <= TODAY) {
-    return keys[0];
-  }
+  if (dateParam && diaryDates.includes(dateParam)) return dateParam;
+  if (diaryDates.length > 0 && diaryDates[0] <= TODAY) return diaryDates[0];
   return TODAY;
 }
 
 // ─── Init ───
-initCalendar();
-
-// Load initial date
-const initialDate = loadFromUrl();
-currentDate = initialDate;
-selectDate(initialDate);
-renderCalendar();
+loadAllData();
