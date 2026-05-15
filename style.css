@@ -648,7 +648,7 @@ body {
   color: var(--text-muted);
 }
 
-/* ============ COMMENTS (Gitalk · Zhihu-style) ============ */
+/* ============ COMMENTS (Gitalk) ============ */
 .comments-section {
   margin-top: 28px;
   background: var(--bg-card);
@@ -658,9 +658,12 @@ body {
 }
 
 .comments-header {
-  margin-bottom: 20px;
-  padding-bottom: 14px;
+  margin-bottom: 16px;
+  padding-bottom: 12px;
   border-bottom: 1px solid var(--border-subtle);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
 .comments-title {
@@ -670,20 +673,26 @@ body {
   color: var(--text-primary);
 }
 
-/* ── Gitalk override ── */
 .gitalk-container {
   min-height: 200px;
 }
 
+/* ── Gitalk root ── */
 .gt-container {
   font-family: var(--font-sans);
 }
 
-.gt-container a { color: var(--accent-blue); }
+.gt-container a { color: var(--accent-blue); border-bottom: none; }
 .gt-container a:hover { color: var(--accent-green); }
 .gt-container .gt-link { border-bottom: none; }
+.gt-container .gt-ico { fill: var(--text-muted); }
+.gt-container .gt-ico:hover { fill: var(--accent-green); }
+.gt-container .gt-svg svg { fill: currentColor; }
 
-/* header / login */
+/* ── Header / comment box ── */
+.gt-container .gt-header {
+  margin-bottom: 16px;
+}
 .gt-container .gt-header textarea {
   font-family: var(--font-sans);
   background: var(--bg-root);
@@ -691,148 +700,198 @@ body {
   border-radius: var(--radius-sm);
   color: var(--text-primary);
   padding: 10px 14px;
+  font-size: 0.85rem;
+  line-height: 1.6;
   transition: border-color var(--transition);
+}
+.gt-container .gt-header textarea::placeholder {
+  color: var(--text-muted);
 }
 .gt-container .gt-header-textarea:hover {
   border-color: var(--border-hover);
 }
 .gt-container .gt-header-textarea:focus {
   border-color: var(--accent-green);
-  box-shadow: 0 0 0 3px rgba(0, 214, 143, 0.1);
+  box-shadow: 0 0 0 3px rgba(0, 214, 143, 0.08);
+}
+.gt-container .gt-header-preview {
+  background: var(--bg-root);
+  border: 1px solid var(--border-medium);
+  border-radius: var(--radius-sm);
+  padding: 10px 14px;
+  color: var(--text-primary);
+  font-size: 0.85rem;
+  line-height: 1.6;
+}
+.gt-container .gt-header-controls {
+  margin-top: 8px;
 }
 .gt-container .gt-header-controls .gt-btn {
   font-family: var(--font-mono);
-  font-size: 0.75rem;
-  padding: 6px 18px;
+  font-size: 0.72rem;
+  padding: 5px 16px;
   border-radius: 20px;
-  border: 1px solid var(--border-medium);
-  background: transparent;
-  color: var(--text-secondary);
-  transition: all var(--transition);
   cursor: pointer;
+  transition: all var(--transition);
 }
-.gt-container .gt-header-controls .gt-btn:hover {
+.gt-container .gt-header-controls .gt-btn-preview {
+  background: transparent;
+  border: 1px solid var(--border-medium);
+  color: var(--text-secondary);
+}
+.gt-container .gt-header-controls .gt-btn-preview:hover {
   border-color: var(--accent-green);
   color: var(--accent-green);
 }
 .gt-container .gt-header-controls .gt-btn-public {
   background: var(--accent-green);
   color: var(--bg-root);
-  border-color: var(--accent-green);
-}
-.gt-container .gt-header-controls .gt-btn-public:hover {
-  opacity: 0.9;
-}
-
-/* login prompt */
-.gt-container .gt-link {
-  font-family: var(--font-mono);
-  font-size: 0.72rem;
-  color: var(--text-muted);
-}
-.gt-container .gt-link-login {
-  font-size: 0.75rem;
-  color: var(--accent-green);
+  border: 1px solid var(--accent-green);
   font-weight: 600;
 }
+.gt-container .gt-header-controls .gt-btn-public:hover {
+  opacity: 0.88;
+}
+.gt-container .gt-header-controls .gt-btn-loading {
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+/* ── Login prompt ── */
+.gt-container .gt-link-login {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--accent-green);
+  font-weight: 600;
+  text-decoration: none;
+}
+.gt-container .gt-link-login:hover {
+  text-decoration: underline;
+}
+
+/* ── User info bar ── */
 .gt-container .gt-user-infos {
   background: transparent;
   border: none;
+  padding: 8px 0;
+}
+.gt-container .gt-user-infos-inner {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.gt-container .gt-user-avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+}
+.gt-container .gt-user-name {
+  font-family: var(--font-sans);
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+.gt-container .gt-user-bio {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  color: var(--text-muted);
 }
 
-/* count */
+/* ── Comment count ── */
 .gt-container .gt-counts {
   font-family: var(--font-mono);
   font-size: 0.72rem;
   color: var(--text-muted);
-  padding: 12px 0 8px;
+  padding: 10px 0 6px;
   border-bottom: 1px solid var(--border-subtle);
-  margin-bottom: 16px;
+  margin-bottom: 14px;
 }
 .gt-container .gt-counts .gt-popup-num {
   color: var(--text-primary);
   font-weight: 600;
 }
 
-/* single comment card */
+/* ── Individual comment ── */
 .gt-container .gt-comment {
-  margin-bottom: 16px;
-  padding: 14px 0;
+  margin-bottom: 14px;
+  padding: 12px 0;
 }
 .gt-container .gt-comment:not(:last-child) {
   border-bottom: 1px solid var(--border-subtle);
 }
 .gt-container .gt-comment-body {
-  margin-left: 44px;
+  margin-left: 42px;
 }
 
 /* avatar */
 .gt-container .gt-avatar {
-  width: 36px;
-  height: 36px;
+  width: 34px;
+  height: 34px;
   float: left;
-  margin-right: 0;
 }
 .gt-container .gt-avatar img {
-  width: 36px;
-  height: 36px;
+  width: 34px;
+  height: 34px;
   border-radius: 50%;
   object-fit: cover;
   border: 1px solid var(--border-subtle);
 }
 
-/* username */
+/* username + admin badge */
 .gt-container .gt-comment-username {
   font-family: var(--font-sans);
   font-size: 0.82rem;
   font-weight: 700;
   color: var(--text-primary);
+  text-decoration: none;
 }
-
-/* admin badge */
+.gt-container .gt-comment-username:hover {
+  color: var(--accent-blue);
+}
 .gt-container .gt-comment-admin {
   font-family: var(--font-mono);
-  font-size: 0.6rem;
+  font-size: 0.58rem;
   padding: 1px 6px;
   border-radius: 3px;
   background: var(--accent-green);
   color: var(--bg-root);
-  margin-left: 6px;
+  margin-left: 5px;
+  vertical-align: middle;
 }
 
 /* timestamp */
 .gt-container .gt-comment-date {
   font-family: var(--font-mono);
-  font-size: 0.65rem;
+  font-size: 0.62rem;
   color: var(--text-muted);
-  margin-left: 8px;
+  margin-left: 6px;
 }
 
 /* comment body text */
 .gt-container .gt-comment-text {
   font-family: var(--font-sans);
-  font-size: 0.88rem;
+  font-size: 0.85rem;
   line-height: 1.7;
   color: var(--text-primary);
-  margin: 6px 0 8px;
+  margin: 5px 0 6px;
   word-break: break-word;
 }
 .gt-container .gt-comment-text p {
-  margin-bottom: 0.5em;
+  margin-bottom: 0.4em;
 }
 
-/* actions row (like, reply) */
+/* actions */
 .gt-container .gt-comment-like,
 .gt-container .gt-comment-reply {
   font-family: var(--font-mono);
-  font-size: 0.68rem;
+  font-size: 0.65rem;
   color: var(--text-muted);
   cursor: pointer;
   transition: color var(--transition);
   background: transparent;
   border: none;
-  padding: 2px 6px 2px 0;
-  margin-right: 12px;
+  padding: 2px 8px 2px 0;
+  margin-right: 10px;
 }
 .gt-container .gt-comment-like:hover,
 .gt-container .gt-comment-reply:hover {
@@ -842,88 +901,129 @@ body {
   vertical-align: middle;
 }
 .gt-container .gt-comment-like .gt-like-count {
-  margin-left: 3px;
+  margin-left: 2px;
 }
 
-/* nested replies */
+/* ── Reply inline comment box ── */
+.gt-container .gt-header-comment {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid var(--border-subtle);
+}
+.gt-container .gt-header-comment .gt-header-textarea {
+  min-height: 80px !important;
+}
+.gt-container .gt-header-comment .gt-header-controls {
+  margin-top: 8px;
+}
+.gt-container .gt-header-comment .gt-btn-public {
+  background: var(--accent-green);
+  color: var(--bg-root);
+  border: 1px solid var(--accent-green);
+}
+.gt-container .gt-header-comment .gt-btn-public:hover {
+  opacity: 0.88;
+}
+.gt-container .gt-header-comment .gt-btn-cancel {
+  background: transparent;
+  border: 1px solid var(--border-medium);
+  color: var(--text-secondary);
+  margin-left: 8px;
+}
+.gt-container .gt-header-comment .gt-btn-cancel:hover {
+  border-color: var(--accent-green);
+  color: var(--accent-green);
+}
+
+/* ── Nested replies ── */
 .gt-container .gt-comment-children {
-  margin-left: 44px;
-  padding-left: 0;
+  margin-left: 42px;
   border-left: 2px solid var(--border-subtle);
-  padding-left: 16px;
+  padding-left: 14px;
   margin-top: 2px;
 }
 .gt-container .gt-comment-children .gt-comment {
   border-bottom: none;
-  margin-bottom: 8px;
-  padding-bottom: 8px;
+  margin-bottom: 6px;
+  padding-bottom: 6px;
 }
 .gt-container .gt-comment-children .gt-comment-body {
-  margin-left: 36px;
+  margin-left: 34px;
 }
 .gt-container .gt-comment-children .gt-avatar {
-  width: 28px;
-  height: 28px;
+  width: 26px;
+  height: 26px;
 }
 .gt-container .gt-comment-children .gt-avatar img {
-  width: 28px;
-  height: 28px;
+  width: 26px;
+  height: 26px;
 }
 
-/* loading / error */
+/* ── Loading / no-issue state ── */
 .gt-container .gt-spinner {
   border-color: var(--border-medium);
   border-top-color: var(--accent-green);
 }
 .gt-container .gt-ico-text {
   color: var(--text-muted);
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+}
+.gt-container .gt-ico-text > .gt-ico {
+  display: none;
 }
 
-/* ── Light mode overrides ── */
+/* ── Light mode ── */
 [data-theme="light"] .gt-container .gt-header textarea {
   border-color: var(--border-medium);
 }
 [data-theme="light"] .gt-container .gt-header textarea:focus {
   border-color: var(--accent-green);
-  box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.1);
+  box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.08);
+}
+[data-theme="light"] .gt-container .gt-header-preview {
+  border-color: var(--border-medium);
 }
 
-/* ── Responsive ── */
+/* ── Mobile responsive ── */
 @media (max-width: 860px) {
   .comments-section {
-    padding: 18px 16px;
+    padding: 16px 14px;
   }
   .gt-container .gt-comment-body {
-    margin-left: 36px;
+    margin-left: 34px;
   }
   .gt-container .gt-avatar {
-    width: 28px;
-    height: 28px;
+    width: 26px;
+    height: 26px;
   }
   .gt-container .gt-avatar img {
-    width: 28px;
-    height: 28px;
+    width: 26px;
+    height: 26px;
   }
   .gt-container .gt-comment-username {
-    font-size: 0.78rem;
+    font-size: 0.75rem;
   }
   .gt-container .gt-comment-text {
-    font-size: 0.82rem;
+    font-size: 0.8rem;
   }
   .gt-container .gt-comment-children {
-    margin-left: 32px;
-    padding-left: 12px;
+    margin-left: 30px;
+    padding-left: 10px;
   }
   .gt-container .gt-comment-children .gt-avatar {
-    width: 24px;
-    height: 24px;
+    width: 22px;
+    height: 22px;
   }
   .gt-container .gt-comment-children .gt-avatar img {
-    width: 24px;
-    height: 24px;
+    width: 22px;
+    height: 22px;
   }
   .gt-container .gt-comment-children .gt-comment-body {
-    margin-left: 30px;
+    margin-left: 28px;
+  }
+  .gt-container .gt-header textarea {
+    font-size: 0.8rem;
   }
 }
 
