@@ -929,6 +929,7 @@ body {
   border: none;
   padding: 2px 8px 2px 0;
   margin-right: 10px;
+  position: static;
 }
 .gt-container .gt-comment-like:hover,
 .gt-container .gt-comment-reply:hover {
