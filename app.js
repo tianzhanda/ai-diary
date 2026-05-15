@@ -232,8 +232,8 @@ function initGiscus() {
   script.setAttribute("data-term", "ai-diary");
   script.setAttribute("data-reactions-enabled", "1");
   script.setAttribute("data-emit-metadata", "0");
-  script.setAttribute("data-input-position", "bottom");
-  script.setAttribute("data-theme", getGiscusTheme());
+  script.setAttribute("data-input-position", "top");
+  script.setAttribute("data-theme", document.documentElement.getAttribute("data-theme") === "light" ? "noborder_light" : "noborder_dark");
   script.setAttribute("data-lang", "zh-CN");
   script.setAttribute("crossorigin", "anonymous");
   script.async = true;
@@ -319,15 +319,11 @@ function applyTheme(theme) {
 }
 
 function setGiscusTheme(theme) {
+  const giscusTheme = theme === "dark" ? "noborder_dark" : "noborder_light";
   const iframe = document.querySelector("iframe.giscus-frame");
   if (iframe) {
-    iframe.contentWindow.postMessage({ giscus: { setConfig: { theme: getGiscusTheme(theme) } } }, "https://giscus.app");
+    iframe.contentWindow.postMessage({ giscus: { setConfig: { theme: giscusTheme } } }, "https://giscus.app");
   }
-}
-
-function getGiscusTheme(theme) {
-  const t = theme || document.documentElement.getAttribute("data-theme") || "dark";
-  return `https://raw.githubusercontent.com/tianzhanda/ai-diary/main/giscus-theme-${t}.css`;
 }
 
 themeToggle.addEventListener("click", () => {
@@ -342,16 +338,6 @@ window.matchMedia("(prefers-color-scheme: light)").addEventListener("change", (e
 });
 
 applyTheme(getPreferredTheme());
-
-// ─── Toggle comments ───
-const toggleBtn = document.getElementById("toggleComments");
-const commentsBody = document.getElementById("commentsBody");
-
-toggleBtn.addEventListener("click", () => {
-  const isCollapsed = commentsBody.classList.contains("collapsed");
-  commentsBody.classList.toggle("collapsed");
-  toggleBtn.textContent = isCollapsed ? "收起评论" : "去评论";
-});
 
 // ─── Init ───
 loadAllData();
