@@ -13,6 +13,7 @@ const TODAY = getTodayStr();
 let currentDate = TODAY;
 let diaryCache = {};     // { date: diary }
 let diaryDates = [];     // ["2026-05-15", ...]
+let loadAbort = null;    // AbortController for in-flight diary load
 
 // ─── DOM refs ───
 const calendarTitle = document.getElementById("calendarTitle");
@@ -61,16 +62,25 @@ async function loadAllData() {
   initGiscus();
 }
 
-async function fetchDiary(dateStr) {
+async function fetchDiary(dateStr, signal) {
   if (diaryCache[dateStr]) return diaryCache[dateStr];
   try {
-    const resp = await fetch(`${API_BASE}/api/diary/${dateStr}`);
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), 8000);
+    if (signal) signal.addEventListener("abort", () => controller.abort(), { once: true });
+
+    const resp = await fetch(`${API_BASE}/api/diary/${dateStr}`, { signal: controller.signal });
+    clearTimeout(timer);
+
     if (resp.ok) {
       const diary = await resp.json();
       diaryCache[dateStr] = diary;
       return diary;
     }
-  } catch(e) {}
+  } catch(e) {
+    if (e.name === "AbortError") throw e;
+    console.warn("Fetch diary failed:", dateStr);
+  }
   return null;
 }
 
@@ -177,12 +187,39 @@ todayBtn.addEventListener("click", () => {
 async function selectDate(dateStr) {
   currentDate = dateStr;
   renderCalendar();
-  await loadDiary(dateStr);
+  showDiaryLoading();
   updateUrl(dateStr);
+
+  if (loadAbort) loadAbort.abort();
+  loadAbort = new AbortController();
+
+  try {
+    await loadDiary(dateStr, loadAbort.signal);
+  } catch(e) {
+    if (e.name === "AbortError") return;
+    showDiaryError();
+  }
 }
 
-async function loadDiary(dateStr) {
-  const diary = await fetchDiary(dateStr);
+function showDiaryLoading() {
+  if (diaryContent) diaryContent.innerHTML = `
+    <div class="loading-spinner">
+      <div class="spinner-outer"><div class="spinner-inner"></div></div>
+      <p>加载中...</p>
+    </div>`;
+}
+
+function showDiaryError() {
+  if (diaryContent) diaryContent.innerHTML = `
+    <div class="diary-empty">
+      <div class="diary-empty-icon">⚠️</div>
+      <h2>加载失败</h2>
+      <p>请求超时或网络异常，请稍后重试</p>
+    </div>`;
+}
+
+async function loadDiary(dateStr, signal) {
+  const diary = await fetchDiary(dateStr, signal);
 
   if (!diary) {
     if (diaryTitle) diaryTitle.textContent = "今日无记录";
