@@ -648,9 +648,9 @@ body {
   color: var(--text-muted);
 }
 
-/* ============ COMMENTS ============ */
+/* ============ COMMENTS (Gitalk · Zhihu-style) ============ */
 .comments-section {
-  margin-top: 24px;
+  margin-top: 28px;
   background: var(--bg-card);
   border-radius: var(--radius-lg);
   padding: 24px 32px;
@@ -658,8 +658,8 @@ body {
 }
 
 .comments-header {
-  margin-bottom: 16px;
-  padding-bottom: 12px;
+  margin-bottom: 20px;
+  padding-bottom: 14px;
   border-bottom: 1px solid var(--border-subtle);
 }
 
@@ -670,8 +670,261 @@ body {
   color: var(--text-primary);
 }
 
-.giscus-container {
+/* ── Gitalk override ── */
+.gitalk-container {
   min-height: 200px;
+}
+
+.gt-container {
+  font-family: var(--font-sans);
+}
+
+.gt-container a { color: var(--accent-blue); }
+.gt-container a:hover { color: var(--accent-green); }
+.gt-container .gt-link { border-bottom: none; }
+
+/* header / login */
+.gt-container .gt-header textarea {
+  font-family: var(--font-sans);
+  background: var(--bg-root);
+  border: 1px solid var(--border-medium);
+  border-radius: var(--radius-sm);
+  color: var(--text-primary);
+  padding: 10px 14px;
+  transition: border-color var(--transition);
+}
+.gt-container .gt-header-textarea:hover {
+  border-color: var(--border-hover);
+}
+.gt-container .gt-header-textarea:focus {
+  border-color: var(--accent-green);
+  box-shadow: 0 0 0 3px rgba(0, 214, 143, 0.1);
+}
+.gt-container .gt-header-controls .gt-btn {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  padding: 6px 18px;
+  border-radius: 20px;
+  border: 1px solid var(--border-medium);
+  background: transparent;
+  color: var(--text-secondary);
+  transition: all var(--transition);
+  cursor: pointer;
+}
+.gt-container .gt-header-controls .gt-btn:hover {
+  border-color: var(--accent-green);
+  color: var(--accent-green);
+}
+.gt-container .gt-header-controls .gt-btn-public {
+  background: var(--accent-green);
+  color: var(--bg-root);
+  border-color: var(--accent-green);
+}
+.gt-container .gt-header-controls .gt-btn-public:hover {
+  opacity: 0.9;
+}
+
+/* login prompt */
+.gt-container .gt-link {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--text-muted);
+}
+.gt-container .gt-link-login {
+  font-size: 0.75rem;
+  color: var(--accent-green);
+  font-weight: 600;
+}
+.gt-container .gt-user-infos {
+  background: transparent;
+  border: none;
+}
+
+/* count */
+.gt-container .gt-counts {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  padding: 12px 0 8px;
+  border-bottom: 1px solid var(--border-subtle);
+  margin-bottom: 16px;
+}
+.gt-container .gt-counts .gt-popup-num {
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+/* single comment card */
+.gt-container .gt-comment {
+  margin-bottom: 16px;
+  padding: 14px 0;
+}
+.gt-container .gt-comment:not(:last-child) {
+  border-bottom: 1px solid var(--border-subtle);
+}
+.gt-container .gt-comment-body {
+  margin-left: 44px;
+}
+
+/* avatar */
+.gt-container .gt-avatar {
+  width: 36px;
+  height: 36px;
+  float: left;
+  margin-right: 0;
+}
+.gt-container .gt-avatar img {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1px solid var(--border-subtle);
+}
+
+/* username */
+.gt-container .gt-comment-username {
+  font-family: var(--font-sans);
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+/* admin badge */
+.gt-container .gt-comment-admin {
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  padding: 1px 6px;
+  border-radius: 3px;
+  background: var(--accent-green);
+  color: var(--bg-root);
+  margin-left: 6px;
+}
+
+/* timestamp */
+.gt-container .gt-comment-date {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  color: var(--text-muted);
+  margin-left: 8px;
+}
+
+/* comment body text */
+.gt-container .gt-comment-text {
+  font-family: var(--font-sans);
+  font-size: 0.88rem;
+  line-height: 1.7;
+  color: var(--text-primary);
+  margin: 6px 0 8px;
+  word-break: break-word;
+}
+.gt-container .gt-comment-text p {
+  margin-bottom: 0.5em;
+}
+
+/* actions row (like, reply) */
+.gt-container .gt-comment-like,
+.gt-container .gt-comment-reply {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: color var(--transition);
+  background: transparent;
+  border: none;
+  padding: 2px 6px 2px 0;
+  margin-right: 12px;
+}
+.gt-container .gt-comment-like:hover,
+.gt-container .gt-comment-reply:hover {
+  color: var(--accent-green);
+}
+.gt-container .gt-comment-like .gt-like-icon {
+  vertical-align: middle;
+}
+.gt-container .gt-comment-like .gt-like-count {
+  margin-left: 3px;
+}
+
+/* nested replies */
+.gt-container .gt-comment-children {
+  margin-left: 44px;
+  padding-left: 0;
+  border-left: 2px solid var(--border-subtle);
+  padding-left: 16px;
+  margin-top: 2px;
+}
+.gt-container .gt-comment-children .gt-comment {
+  border-bottom: none;
+  margin-bottom: 8px;
+  padding-bottom: 8px;
+}
+.gt-container .gt-comment-children .gt-comment-body {
+  margin-left: 36px;
+}
+.gt-container .gt-comment-children .gt-avatar {
+  width: 28px;
+  height: 28px;
+}
+.gt-container .gt-comment-children .gt-avatar img {
+  width: 28px;
+  height: 28px;
+}
+
+/* loading / error */
+.gt-container .gt-spinner {
+  border-color: var(--border-medium);
+  border-top-color: var(--accent-green);
+}
+.gt-container .gt-ico-text {
+  color: var(--text-muted);
+}
+
+/* ── Light mode overrides ── */
+[data-theme="light"] .gt-container .gt-header textarea {
+  border-color: var(--border-medium);
+}
+[data-theme="light"] .gt-container .gt-header textarea:focus {
+  border-color: var(--accent-green);
+  box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.1);
+}
+
+/* ── Responsive ── */
+@media (max-width: 860px) {
+  .comments-section {
+    padding: 18px 16px;
+  }
+  .gt-container .gt-comment-body {
+    margin-left: 36px;
+  }
+  .gt-container .gt-avatar {
+    width: 28px;
+    height: 28px;
+  }
+  .gt-container .gt-avatar img {
+    width: 28px;
+    height: 28px;
+  }
+  .gt-container .gt-comment-username {
+    font-size: 0.78rem;
+  }
+  .gt-container .gt-comment-text {
+    font-size: 0.82rem;
+  }
+  .gt-container .gt-comment-children {
+    margin-left: 32px;
+    padding-left: 12px;
+  }
+  .gt-container .gt-comment-children .gt-avatar {
+    width: 24px;
+    height: 24px;
+  }
+  .gt-container .gt-comment-children .gt-avatar img {
+    width: 24px;
+    height: 24px;
+  }
+  .gt-container .gt-comment-children .gt-comment-body {
+    margin-left: 30px;
+  }
 }
 
 /* ============ FOOTER ============ */
@@ -730,9 +983,5 @@ body {
   .diary-content {
     font-size: 0.88rem;
     line-height: 1.8;
-  }
-
-  .comments-section {
-    padding: 18px 20px;
   }
 }

@@ -9,6 +9,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css">
 </head>
 <body>
   <header class="header">
@@ -80,12 +81,12 @@
       </article>
     </div>
 
-    <!-- 评论区域（Giscus） -->
+    <!-- 评论区域（Gitalk，知乎样式） -->
     <section class="comments-section">
       <div class="comments-header">
         <span class="comments-title">💬 点评</span>
       </div>
-      <div id="giscus-container" class="giscus-container"></div>
+      <div id="gitalk-container" class="gitalk-container"></div>
     </section>
   </main>
 
@@ -93,6 +94,7 @@
     <p>AI启智录 · 每天23:00更新 · <a href="https://github.com/tianzhanda/ai-diary" target="_blank">GitHub</a></p>
   </footer>
 
+  <script src="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
   <script src="diary-data.js"></script>
   <script src="app.js"></script>

@@ -3,12 +3,6 @@
 // ─── API Config ───
 const API_BASE = "https://ai-diary.3177981404.workers.dev";
 
-// ─── Giscus Config ───
-const GISCUS_REPO = "tianzhanda/tianzhanda.github.io";
-const GISCUS_REPO_ID = "R_kgDORbj5Tw";
-const GISCUS_CATEGORY = "Announcements";
-const GISCUS_CATEGORY_ID = "DIC_kwDORbj5T84C9GAQ";
-
 const TODAY = getTodayStr();
 let currentDate = TODAY;
 let diaryCache = {};     // { date: diary }
@@ -60,7 +54,7 @@ async function loadAllData() {
   currentDate = initialDate;
   selectDate(initialDate);
   renderCalendar();
-  initGiscus();
+  initGitalk();
 }
 
 async function fetchDiary(dateStr, signal) {
@@ -256,33 +250,26 @@ async function loadDiary(dateStr, signal) {
   }
 }
 
-// ─── Giscus (site-wide, loaded once) ───
-let giscusLoaded = false;
+// ─── Gitalk (site-wide) ───
+let gitalkInited = false;
 
-function initGiscus() {
-  if (giscusLoaded) return;
-  giscusLoaded = true;
+function initGitalk() {
+  if (gitalkInited) return;
+  gitalkInited = true;
 
-  const container = document.getElementById("giscus-container");
-  if (!container) return;
+  const container = document.getElementById("gitalk-container");
+  if (!container || typeof Gitalk === "undefined") return;
 
-  const script = document.createElement("script");
-  script.src = "https://giscus.app/client.js";
-  script.setAttribute("data-repo", GISCUS_REPO);
-  script.setAttribute("data-repo-id", GISCUS_REPO_ID);
-  script.setAttribute("data-category", GISCUS_CATEGORY);
-  script.setAttribute("data-category-id", GISCUS_CATEGORY_ID);
-  script.setAttribute("data-mapping", "specific");
-  script.setAttribute("data-term", "ai-diary");
-  script.setAttribute("data-reactions-enabled", "1");
-  script.setAttribute("data-emit-metadata", "0");
-  script.setAttribute("data-input-position", "top");
-  script.setAttribute("data-theme", document.documentElement.getAttribute("data-theme") === "light" ? "noborder_light" : "noborder_dark");
-  script.setAttribute("data-lang", "zh-CN");
-  script.setAttribute("crossorigin", "anonymous");
-  script.async = true;
-
-  container.appendChild(script);
+  const gitalk = new Gitalk({
+    clientID: "Ov23liLIH2WD13EmHhXG",
+    repo: "ai-diary",
+    owner: "tianzhanda",
+    admin: ["tianzhanda"],
+    id: "ai-diary-comments",
+    distractionFreeMode: false,
+    language: "zh-CN",
+  });
+  gitalk.render("gitalk-container");
 }
 
 // ─── Search ───
@@ -367,16 +354,7 @@ function getPreferredTheme() {
 function applyTheme(theme) {
   document.documentElement.setAttribute("data-theme", theme);
   themeToggle.textContent = theme === "dark" ? "☀️" : "🌙";
-  setGiscusTheme(theme);
   localStorage.setItem("theme", theme);
-}
-
-function setGiscusTheme(theme) {
-  const giscusTheme = theme === "dark" ? "noborder_dark" : "noborder_light";
-  const iframe = document.querySelector("iframe.giscus-frame");
-  if (iframe) {
-    iframe.contentWindow.postMessage({ giscus: { setConfig: { theme: giscusTheme } } }, "https://giscus.app");
-  }
 }
 
 themeToggle.addEventListener("click", () => {
