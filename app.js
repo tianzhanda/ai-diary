@@ -24,10 +24,10 @@ const searchInput = document.getElementById("searchInput");
 const searchResults = document.getElementById("searchResults");
 const diaryTitle = document.getElementById("diaryTitle");
 const diaryDate = document.getElementById("diaryDate");
+const diaryModel = document.getElementById("diaryModel");
 const diaryContent = document.getElementById("diaryContent");
 const diaryFooter = document.getElementById("diaryFooter");
 const sourceLinks = document.getElementById("sourceLinks");
-const modelName = document.getElementById("modelName");
 
 // ─── Data Loading ───
 async function loadAllData() {
@@ -199,15 +199,17 @@ async function loadDiary(dateStr) {
 
   diaryTitle.textContent = diary.title;
   diaryDate.textContent = formatDateDisplay(dateStr);
+  diaryModel.textContent = diary.model || "未知";
   diaryContent.innerHTML = diary.content;
 
   if (diary.sources && diary.sources.length > 0) {
     sourceLinks.innerHTML = diary.sources.map(s =>
       `<a href="${s.url}" target="_blank" class="source-link">${s.title}</a>`
     ).join("");
+    diaryFooter.style.display = "flex";
+  } else {
+    diaryFooter.style.display = "none";
   }
-  modelName.textContent = diary.model || "未知";
-  diaryFooter.style.display = "flex";
 }
 
 // ─── Giscus ───
@@ -226,7 +228,7 @@ function updateGiscus(dateStr) {
   script.setAttribute("data-reactions-enabled", "1");
   script.setAttribute("data-emit-metadata", "0");
   script.setAttribute("data-input-position", "top");
-  script.setAttribute("data-theme", "dark");
+  script.setAttribute("data-theme", document.documentElement.getAttribute("data-theme") === "light" ? "light" : "dark");
   script.setAttribute("data-lang", "zh-CN");
   script.setAttribute("crossorigin", "anonymous");
   script.async = true;
@@ -294,6 +296,42 @@ function loadFromUrl() {
   if (diaryDates.length > 0 && diaryDates[0] <= TODAY) return diaryDates[0];
   return TODAY;
 }
+
+// ─── Theme ───
+const themeToggle = document.getElementById("themeToggle");
+
+function getPreferredTheme() {
+  const stored = localStorage.getItem("theme");
+  if (stored) return stored;
+  return window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark";
+}
+
+function applyTheme(theme) {
+  document.documentElement.setAttribute("data-theme", theme);
+  themeToggle.textContent = theme === "dark" ? "☀️" : "🌙";
+  setGiscusTheme(theme === "dark" ? "dark" : "light");
+  localStorage.setItem("theme", theme);
+}
+
+function setGiscusTheme(theme) {
+  const iframe = document.querySelector("iframe.giscus-frame");
+  if (iframe) {
+    iframe.contentWindow.postMessage({ giscus: { setConfig: { theme } } }, "https://giscus.app");
+  }
+}
+
+themeToggle.addEventListener("click", () => {
+  const current = document.documentElement.getAttribute("data-theme") || "dark";
+  applyTheme(current === "dark" ? "light" : "dark");
+});
+
+window.matchMedia("(prefers-color-scheme: light)").addEventListener("change", (e) => {
+  if (!localStorage.getItem("theme")) {
+    applyTheme(e.matches ? "light" : "dark");
+  }
+});
+
+applyTheme(getPreferredTheme());
 
 // ─── Init ───
 loadAllData();
