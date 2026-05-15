@@ -185,30 +185,30 @@ async function loadDiary(dateStr) {
   const diary = await fetchDiary(dateStr);
 
   if (!diary) {
-    diaryTitle.textContent = "今日无记录";
-    diaryDate.textContent = formatDateDisplay(dateStr);
-    diaryContent.innerHTML = `
+    if (diaryTitle) diaryTitle.textContent = "今日无记录";
+    if (diaryDate) diaryDate.textContent = formatDateDisplay(dateStr);
+    if (diaryContent) diaryContent.innerHTML = `
       <div class="diary-empty">
         <div class="diary-empty-icon">📖</div>
         <h2>这一天的日记尚未生成</h2>
         <p>AI启智录每天23:00更新，届时请再来查看</p>
       </div>`;
-    diaryFooter.style.display = "none";
+    if (diaryFooter) diaryFooter.style.display = "none";
     return;
   }
 
-  diaryTitle.textContent = diary.title;
-  diaryDate.textContent = formatDateDisplay(dateStr);
-  diaryModel.textContent = diary.model || "未知";
-  diaryContent.innerHTML = diary.content;
+  if (diaryTitle) diaryTitle.textContent = diary.title;
+  if (diaryDate) diaryDate.textContent = formatDateDisplay(dateStr);
+  if (diaryModel) diaryModel.textContent = diary.model || "未知";
+  if (diaryContent) diaryContent.innerHTML = diary.content;
 
   if (diary.sources && diary.sources.length > 0) {
-    sourceLinks.innerHTML = diary.sources.map(s =>
+    if (sourceLinks) sourceLinks.innerHTML = diary.sources.map(s =>
       `<a href="${s.url}" target="_blank" class="source-link">${s.title}</a>`
     ).join("");
-    diaryFooter.style.display = "flex";
+    if (diaryFooter) diaryFooter.style.display = "flex";
   } else {
-    diaryFooter.style.display = "none";
+    if (diaryFooter) diaryFooter.style.display = "none";
   }
 }
 
