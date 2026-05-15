@@ -186,7 +186,9 @@ async function loadDiary(dateStr) {
 
   if (!diary) {
     if (diaryTitle) diaryTitle.textContent = "今日无记录";
-    if (diaryDate) diaryDate.textContent = formatDateDisplay(dateStr);
+    if (diaryDate) diaryDate.textContent = "----";
+    if (diaryModel) diaryModel.textContent = "";
+    document.querySelectorAll(".diary-meta .diary-date").forEach(el => el.style.display = "none");
     if (diaryContent) diaryContent.innerHTML = `
       <div class="diary-empty">
         <div class="diary-empty-icon">📖</div>
@@ -197,6 +199,7 @@ async function loadDiary(dateStr) {
     return;
   }
 
+  document.querySelectorAll(".diary-meta .diary-date").forEach(el => el.style.display = "");
   if (diaryTitle) diaryTitle.textContent = diary.title;
   if (diaryDate) diaryDate.textContent = formatDateDisplay(dateStr);
   if (diaryModel) diaryModel.textContent = diary.model || "未知";
