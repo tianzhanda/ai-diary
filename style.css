@@ -633,6 +633,35 @@ body {
   color: var(--text-primary);
 }
 
+.comments-toggle {
+  background: transparent;
+  border: 1px solid var(--border-dim);
+  color: var(--accent-green);
+  padding: 4px 16px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  transition: all var(--transition);
+}
+
+.comments-toggle:hover {
+  background: var(--glow-green);
+  border-color: var(--accent-green);
+}
+
+.comments-body {
+  overflow: hidden;
+  transition: max-height 0.35s ease, opacity 0.35s ease;
+  max-height: 2000px;
+  opacity: 1;
+}
+
+.comments-body.collapsed {
+  max-height: 0;
+  opacity: 0;
+}
+
 .giscus-container {
   min-height: 200px;
 }

@@ -1,0 +1,5 @@
+@import url("https://giscus.app/themes/noborder_light.css");
+
+.color-text-secondary.text-sm {
+  display: none !important;
+}

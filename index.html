@@ -81,12 +81,15 @@
       </article>
     </div>
 
-    <!-- 评论区域（Giscus） -->
+    <!-- 评论区域（Giscus，默认折叠） -->
     <section class="comments-section">
       <div class="comments-header">
         <span class="comments-title">💬 点评</span>
+        <button id="toggleComments" class="comments-toggle">去评论</button>
       </div>
-      <div id="giscus-container" class="giscus-container"></div>
+      <div id="commentsBody" class="comments-body collapsed">
+        <div id="giscus-container" class="giscus-container"></div>
+      </div>
     </section>
   </main>
 
