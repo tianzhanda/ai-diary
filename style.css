@@ -778,6 +778,39 @@ body {
   border: none;
   padding: 8px 0;
 }
+
+/* Override Gitalk CDN hardcoded colors */
+.gt-container .gt-comment-content {
+  background: transparent !important;
+  box-shadow: none !important;
+  padding: 0 0 0 4px;
+  margin-left: 42px;
+}
+.gt-container .gt-comment-admin .gt-comment-content {
+  background: transparent !important;
+}
+.gt-container .gt-comment-content:hover {
+  box-shadow: none !important;
+}
+.gt-container .gt-comment-body {
+  color: var(--text-primary) !important;
+}
+.gt-container .markdown-body {
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  font-size: 0.85rem;
+}
+.gt-container .markdown-body a {
+  color: var(--accent-blue);
+}
+.gt-container .markdown-body a:hover {
+  color: var(--accent-green);
+}
+.gt-container .gt-comment-block-1,
+.gt-container .gt-comment-block-2 {
+  display: none;
+}
+
 .gt-container .gt-user-infos-inner {
   display: flex;
   align-items: center;
