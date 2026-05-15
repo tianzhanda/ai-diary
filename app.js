@@ -58,6 +58,7 @@ async function loadAllData() {
   currentDate = initialDate;
   selectDate(initialDate);
   renderCalendar();
+  initGiscus();
 }
 
 async function fetchDiary(dateStr) {
@@ -177,7 +178,6 @@ async function selectDate(dateStr) {
   currentDate = dateStr;
   renderCalendar();
   await loadDiary(dateStr);
-  updateGiscus(dateStr);
   updateUrl(dateStr);
 }
 
@@ -212,10 +212,15 @@ async function loadDiary(dateStr) {
   }
 }
 
-// ─── Giscus ───
-function updateGiscus(dateStr) {
+// ─── Giscus (site-wide, loaded once) ───
+let giscusLoaded = false;
+
+function initGiscus() {
+  if (giscusLoaded) return;
+  giscusLoaded = true;
+
   const container = document.getElementById("giscus-container");
-  container.innerHTML = "";
+  if (!container) return;
 
   const script = document.createElement("script");
   script.src = "https://giscus.app/client.js";
@@ -224,11 +229,11 @@ function updateGiscus(dateStr) {
   script.setAttribute("data-category", GISCUS_CATEGORY);
   script.setAttribute("data-category-id", GISCUS_CATEGORY_ID);
   script.setAttribute("data-mapping", "specific");
-  script.setAttribute("data-term", `ai-diary-${dateStr}`);
+  script.setAttribute("data-term", "ai-diary");
   script.setAttribute("data-reactions-enabled", "1");
   script.setAttribute("data-emit-metadata", "0");
   script.setAttribute("data-input-position", "top");
-  script.setAttribute("data-theme", document.documentElement.getAttribute("data-theme") === "light" ? "light" : "dark");
+  script.setAttribute("data-theme", document.documentElement.getAttribute("data-theme") === "light" ? "noborder_light" : "noborder_dark");
   script.setAttribute("data-lang", "zh-CN");
   script.setAttribute("crossorigin", "anonymous");
   script.async = true;
@@ -309,14 +314,15 @@ function getPreferredTheme() {
 function applyTheme(theme) {
   document.documentElement.setAttribute("data-theme", theme);
   themeToggle.textContent = theme === "dark" ? "☀️" : "🌙";
-  setGiscusTheme(theme === "dark" ? "dark" : "light");
+  setGiscusTheme(theme);
   localStorage.setItem("theme", theme);
 }
 
 function setGiscusTheme(theme) {
+  const giscusTheme = theme === "dark" ? "noborder_dark" : "noborder_light";
   const iframe = document.querySelector("iframe.giscus-frame");
   if (iframe) {
-    iframe.contentWindow.postMessage({ giscus: { setConfig: { theme } } }, "https://giscus.app");
+    iframe.contentWindow.postMessage({ giscus: { setConfig: { theme: giscusTheme } } }, "https://giscus.app");
   }
 }
 
