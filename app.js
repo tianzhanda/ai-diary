@@ -14,6 +14,7 @@ let currentDate = TODAY;
 let diaryCache = {};     // { date: diary }
 let diaryDates = [];     // ["2026-05-15", ...]
 let loadAbort = null;    // AbortController for in-flight diary load
+let apiAvailable = true; // Tracks if Cloudflare Worker is reachable
 
 // ─── DOM refs ───
 const calendarTitle = document.getElementById("calendarTitle");
@@ -47,7 +48,7 @@ async function loadAllData() {
     }
   } catch(e) {
     console.warn("API unavailable, using fallback data");
-    // Fallback to hardcoded data if available
+    apiAvailable = false;
     if (typeof DIARY_DATA !== 'undefined') {
       diaryDates = Object.keys(DIARY_DATA).sort().reverse();
       diaryCache = DIARY_DATA;
@@ -64,6 +65,8 @@ async function loadAllData() {
 
 async function fetchDiary(dateStr, signal) {
   if (diaryCache[dateStr]) return diaryCache[dateStr];
+  if (!apiAvailable) return null;
+
   try {
     const controller = new AbortController();
     const timer = setTimeout(() => controller.abort(), 8000);
@@ -79,6 +82,7 @@ async function fetchDiary(dateStr, signal) {
     }
   } catch(e) {
     if (e.name === "AbortError") throw e;
+    apiAvailable = false;
     console.warn("Fetch diary failed:", dateStr);
   }
   return null;
