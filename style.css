@@ -441,7 +441,7 @@ body {
 .diary-meta {
   display: flex;
   align-items: center;
-  gap: 0;
+  gap: 6px;
 }
 
 .diary-date,
