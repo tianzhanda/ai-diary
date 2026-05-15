@@ -261,7 +261,8 @@ function initGitalk() {
   if (!container || typeof Gitalk === "undefined") return;
 
   const gitalk = new Gitalk({
-    clientID: "Ov23liLIH2WD13EmHhXG",
+    clientID: "Ov23liyavngWcJn8VouQ",
+    clientSecret: "b59e443b2a31b40e8edac41c18ffb8f7c1e70831",
     repo: "ai-diary",
     owner: "tianzhanda",
     admin: ["tianzhanda"],
