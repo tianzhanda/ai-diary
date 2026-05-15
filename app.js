@@ -244,7 +244,7 @@ async function loadDiary(dateStr, signal) {
   if (diaryTitle) diaryTitle.textContent = diary.title;
   if (diaryDate) diaryDate.textContent = formatDateDisplay(dateStr);
   if (diaryModel) diaryModel.textContent = diary.model || "未知";
-  if (diaryContent) diaryContent.innerHTML = diary.content;
+  if (diaryContent) diaryContent.innerHTML = renderContent(diary.content);
 
   if (diary.sources && diary.sources.length > 0) {
     if (sourceLinks) sourceLinks.innerHTML = diary.sources.map(s =>
@@ -329,6 +329,15 @@ function stripHtml(html) {
   const tmp = document.createElement("div");
   tmp.innerHTML = html;
   return tmp.textContent || tmp.innerText || "";
+}
+
+function renderContent(content) {
+  if (!content) return "";
+  if (/<[a-z][\s\S]*>/i.test(content)) return content;
+  if (typeof marked !== "undefined" && marked.parse) {
+    return marked.parse(content);
+  }
+  return content.split(/\n\n+/).map(p => p.trim()).filter(Boolean).map(p => `<p>${p}</p>`).join("\n");
 }
 
 // ─── URL sync ───
