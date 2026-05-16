@@ -1174,7 +1174,6 @@ body {
   border-radius: 3px;
   background: transparent;
   color: var(--accent-green);
-  border: 1px solid var(--accent-green);
   margin-left: 5px;
   vertical-align: middle;
 }
