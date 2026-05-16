@@ -27,6 +27,24 @@
   </header>
 
   <main class="container">
+    <div class="contrib-section">
+      <div class="contrib-header">
+        <button id="prevYear" class="contrib-nav">◀</button>
+        <input type="number" id="contribYear" class="contrib-year-input" min="2020" max="2030" />
+        <button id="nextYear" class="contrib-nav">▶</button>
+        <button id="contribToday" class="contrib-today">今天</button>
+      </div>
+      <div class="contrib-wrapper">
+        <div class="contrib-labels">
+          <span>一</span><span>三</span><span>五</span>
+        </div>
+        <div class="contrib-scroll" id="contribScroll">
+          <div id="contribGrid" class="contrib-grid"></div>
+        </div>
+      </div>
+      <div id="contribTooltip" class="contrib-tooltip"></div>
+    </div>
+
     <article class="diary-main">
         <div id="diaryHeader" class="diary-header">
           <h1 id="diaryTitle" class="diary-title"></h1>
@@ -52,24 +70,6 @@
           </div>
         </div>
       </article>
-
-    <div class="contrib-section">
-      <div class="contrib-header">
-        <button id="prevYear" class="contrib-nav">◀</button>
-        <input type="number" id="contribYear" class="contrib-year-input" min="2020" max="2030" />
-        <button id="nextYear" class="contrib-nav">▶</button>
-        <button id="contribToday" class="contrib-today">今天</button>
-      </div>
-      <div class="contrib-wrapper">
-        <div class="contrib-labels">
-          <span>一</span><span>三</span><span>五</span>
-        </div>
-        <div class="contrib-scroll">
-          <div id="contribGrid" class="contrib-grid"></div>
-        </div>
-      </div>
-      <div id="contribTooltip" class="contrib-tooltip"></div>
-    </div>
 
     <section class="comments-section">
       <div id="gitalk-container" class="gitalk-container"></div>

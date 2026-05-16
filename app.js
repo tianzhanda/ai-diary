@@ -28,6 +28,7 @@ const contribYearInput = document.getElementById("contribYear");
 const contribToday = document.getElementById("contribToday");
 const contribGrid = document.getElementById("contribGrid");
 const contribTooltip = document.getElementById("contribTooltip");
+const contribScroll = document.getElementById("contribScroll");
 
 async function loadAllData() {
   try {
@@ -198,6 +199,11 @@ contribToday.addEventListener("click", () => {
   renderContributionGraph(contribYear);
   selectDate(TODAY);
 });
+
+contribScroll.addEventListener("wheel", (e) => {
+  contribScroll.scrollLeft += e.deltaY;
+  e.preventDefault();
+}, { passive: false });
 
 async function selectDate(dateStr) {
   currentDate = dateStr;

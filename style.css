@@ -273,6 +273,7 @@ body {
 }
 
 .diary-title {
+  text-align: center;
   font-family: var(--font-sans);
   font-size: 1.5rem;
   font-weight: 700;
@@ -605,15 +606,12 @@ body {
   overflow-x: auto;
   overflow-y: hidden;
   -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
 }
 
 .contrib-scroll::-webkit-scrollbar {
-  height: 4px;
-}
-
-.contrib-scroll::-webkit-scrollbar-thumb {
-  background: var(--text-muted);
-  border-radius: 2px;
+  display: none;
 }
 
 .contrib-grid {
