@@ -670,40 +670,5 @@ function renderMilestones() {
   });
 }
 
-/* ============ BACKGROUND GLOW ============ */
-
-(function initBgGlow() {
-  var g1 = document.querySelector('.bg-glow-1');
-  var g2 = document.querySelector('.bg-glow-2');
-  if (!g1 || !g2) return;
-
-  var mx = 0.5, my = 0.5;
-  var cx = 0.5, cy = 0.5;
-
-  document.addEventListener('mousemove', function (e) {
-    mx = e.clientX / window.innerWidth;
-    my = e.clientY / window.innerHeight;
-  }, { passive: true });
-
-  function lerp(a, b, t) { return a + (b - a) * t; }
-
-  function tick() {
-    cx = lerp(cx, mx, 0.08);
-    cy = lerp(cy, my, 0.08);
-
-    var x1 = cx * window.innerWidth;
-    var y1 = cy * window.innerHeight;
-    g1.style.transform = 'translate(' + x1 + 'px, ' + y1 + 'px) translate(-50%, -50%)';
-
-    var x2 = lerp(window.innerWidth * 0.2, window.innerWidth * 0.8, cx);
-    var y2 = lerp(window.innerHeight * 0.2, window.innerHeight * 0.8, cy);
-    g2.style.transform = 'translate(' + x2 + 'px, ' + y2 + 'px) translate(-50%, -50%)';
-
-    requestAnimationFrame(tick);
-  }
-
-  requestAnimationFrame(tick);
-})();
-
 renderMilestones();
 loadAllData();
