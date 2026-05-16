@@ -186,7 +186,7 @@ body {
 
 .logo-text {
   font-family: var(--font-mono);
-  font-size: 1.05rem;
+  font-size: 1.5rem;
   font-weight: 800;
   color: var(--text-primary);
   letter-spacing: 1px;
@@ -194,7 +194,7 @@ body {
 
 .tagline {
   font-family: var(--font-mono);
-  font-size: 0.78rem;
+  font-size: 1.3rem;
   color: var(--text-muted);
   letter-spacing: 2px;
   text-align: center;
@@ -275,7 +275,7 @@ body {
 .diary-title {
   text-align: center;
   font-family: var(--font-sans);
-  font-size: 1.6rem;
+  font-size: 1.5rem;
   font-weight: 800;
   line-height: 1.4;
   color: var(--text-primary);
@@ -1362,7 +1362,7 @@ body {
   }
 
   .tagline {
-    font-size: 0.68rem;
+    font-size: 1.1rem;
     letter-spacing: 1px;
   }
 
