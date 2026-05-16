@@ -491,16 +491,12 @@ window.matchMedia("(prefers-color-scheme: light)").addEventListener("change", (e
 function renderMilestones() {
   const section = document.getElementById('milestoneSection');
   const inner = document.getElementById('milestoneTrackInner');
-  const yearSpan = document.getElementById('milestoneYears');
 
   if (typeof MILESTONES === 'undefined' || !MILESTONES || MILESTONES.length === 0) {
     section.style.display = 'none';
     return;
   }
   section.style.display = '';
-
-  const years = [...new Set(MILESTONES.map(m => m.year))].sort();
-  yearSpan.textContent = `${years[0]} — ${years[years.length - 1]}`;
 
   let html = '';
   let lastYear = null;
@@ -509,7 +505,7 @@ function renderMilestones() {
       html += `<div class="milestone-year-mark" data-year="${lastYear}"><div class="milestone-year-bar"></div><span class="milestone-year-label">${lastYear}</span></div>`;
     }
     lastYear = m.year;
-    html += `<div class="milestone-item" data-index="${i}"><span class="milestone-item-label">${m.title}</span><div class="milestone-dot-wrap"><div class="milestone-dot"></div><span class="milestone-item-date">${m.month}月${m.day}日</span></div></div>`;
+    html += `<div class="milestone-item" data-index="${i}"><span class="milestone-item-label" data-title="${m.title}">${m.title}</span><div class="milestone-dot-wrap"><div class="milestone-dot"></div><span class="milestone-item-date">${m.month}月${m.day}日</span></div></div>`;
   });
   if (lastYear !== null) {
     html += `<div class="milestone-year-mark" data-year="${lastYear}"><div class="milestone-year-bar"></div><span class="milestone-year-label">${lastYear}</span></div>`;

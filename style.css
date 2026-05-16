@@ -118,6 +118,48 @@
   box-shadow: var(--shadow-sm);
 }
 
+[data-theme="light"] .milestone-item-label {
+  color: #3b4045;
+}
+
+[data-theme="light"] .milestone-item-date,
+[data-theme="light"] .milestone-year-label {
+  color: #6b737c;
+}
+
+[data-theme="light"] .milestone-dot {
+  background: #bcc3cc;
+}
+
+[data-theme="light"] .milestone-year-bar {
+  background: #bcc3cc;
+}
+
+[data-theme="light"] .milestone-title {
+  color: #6b737c;
+}
+
+[data-theme="light"] .milestone-track-inner::before {
+  background: #d0d5db;
+}
+
+[data-theme="light"] .milestone-year-mark .milestone-dot {
+  background: #bcc3cc;
+}
+
+[data-theme="light"] .contrib-labels,
+[data-theme="light"] .contrib-months {
+  color: #6b737c;
+}
+
+[data-theme="light"] .contrib-stats {
+  color: #6b737c;
+}
+
+[data-theme="light"] .contrib-legend {
+  color: #6b737c;
+}
+
 *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
 body {
@@ -532,7 +574,7 @@ body {
 .milestone-header {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
   margin-bottom: 6px;
   padding: 0 4px;
 }
@@ -543,13 +585,6 @@ body {
   font-weight: 600;
   color: var(--text-muted);
   letter-spacing: 2px;
-  text-transform: uppercase;
-}
-
-.milestone-years {
-  font-family: var(--font-mono);
-  font-size: 0.6rem;
-  color: var(--text-muted);
 }
 
 .milestone-body {
@@ -622,7 +657,7 @@ body {
   justify-content: flex-end;
   height: 100%;
   position: relative;
-  padding: 0 12px;
+  padding: 0 20px;
   cursor: default;
   transition: opacity var(--transition);
 }
@@ -639,6 +674,26 @@ body {
   text-overflow: ellipsis;
   margin-bottom: 6px;
   transition: color var(--transition);
+}
+
+.milestone-item-label:hover::after {
+  content: attr(data-title);
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--bg-card);
+  border: 1px solid var(--border-medium);
+  border-radius: var(--radius-sm);
+  padding: 4px 10px;
+  font-family: var(--font-sans);
+  font-size: 0.72rem;
+  color: var(--text-primary);
+  white-space: nowrap;
+  box-shadow: var(--shadow-sm);
+  z-index: 100;
+  pointer-events: none;
+  margin-bottom: 4px;
 }
 
 .milestone-item.active .milestone-item-label {
@@ -721,16 +776,12 @@ body {
     font-size: 0.55rem;
   }
 
-  .milestone-years {
-    font-size: 0.55rem;
-  }
-
   .milestone-track {
     height: 62px;
   }
 
   .milestone-item {
-    padding: 0 10px;
+    padding: 0 16px;
   }
 
   .milestone-item-label {
@@ -771,7 +822,7 @@ body {
   }
 
   .milestone-item {
-    padding: 0 8px;
+    padding: 0 12px;
   }
 
   .milestone-item-label {
