@@ -967,10 +967,10 @@ body {
 }
 .gt-container .gt-header textarea {
   font-family: var(--font-sans);
-  background: var(--bg-root);
+  background: var(--bg-root) !important;
   border: 1px solid var(--border-medium);
   border-radius: var(--radius-sm);
-  color: var(--text-primary);
+  color: var(--text-primary) !important;
   padding: 10px 14px;
   font-size: 0.85rem;
   line-height: 1.6;
@@ -987,11 +987,11 @@ body {
   box-shadow: 0 0 0 3px rgba(0, 214, 143, 0.08);
 }
 .gt-container .gt-header-preview {
-  background: var(--bg-root);
-  border: 1px solid var(--border-medium);
+  background: var(--bg-root) !important;
+  border: 1px solid var(--border-medium) !important;
   border-radius: var(--radius-sm);
   padding: 10px 14px;
-  color: var(--text-primary);
+  color: var(--text-primary) !important;
   font-size: 0.85rem;
   line-height: 1.6;
 }
@@ -1287,6 +1287,16 @@ body {
   display: none;
 }
 
+.gt-container .gt-popup {
+  background: var(--bg-card) !important;
+  border-color: var(--border-medium) !important;
+  color: var(--text-primary);
+}
+
+.gt-container .gt-popup .gt-ico-text {
+  color: var(--text-secondary);
+}
+
 [data-theme="light"] .comments-section {
   border-top-color: rgba(5, 150, 105, 0.12);
 }
@@ -1302,6 +1312,7 @@ body {
 }
 
 [data-theme="light"] .gt-container .gt-header textarea {
+  background: var(--bg-root) !important;
   border-color: var(--border-medium);
 }
 [data-theme="light"] .gt-container .gt-header textarea:focus {
