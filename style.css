@@ -644,6 +644,7 @@ body {
   position: relative;
   padding: 0 4px;
   will-change: transform;
+  overflow: hidden;
 }
 
 .milestone-track-inner::before {

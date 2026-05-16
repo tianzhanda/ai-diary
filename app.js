@@ -507,16 +507,19 @@ function renderMilestones() {
     lastYear = m.year;
     html += `<div class="milestone-item" data-index="${i}" data-title="${m.title}"><span class="milestone-item-label">${m.title}</span><div class="milestone-dot-wrap"><div class="milestone-dot"></div><span class="milestone-item-date">${m.month}月${m.day}日</span></div></div>`;
   });
+  // Hide until positioned to prevent flash of untranslated content
+  inner.style.visibility = 'hidden';
   inner.innerHTML = html;
 
   const track = document.getElementById('milestoneTrack');
   const tooltip = document.getElementById('milestoneTooltip');
   const items = inner.querySelectorAll('.milestone-item');
-  if (items.length === 0) return;
+  if (items.length === 0) { inner.style.visibility = ''; return; }
 
   let activeIndex = items.length - 1;
   let animating = false;
   let pendingIndex = null;
+  let snapRetries = 0;
 
   function getItemOffsets() {
     const offsets = [];
@@ -542,12 +545,20 @@ function renderMilestones() {
     const offsets = getItemOffsets();
     const target = -(offsets[activeIndex]);
 
+    // Retry if layout not ready (all offsets are zero)
+    if (!animate && Math.abs(target) < 0.5 && snapRetries < 8) {
+      snapRetries++;
+      setTimeout(function () { snapTo(index, animate); }, 60);
+      return;
+    }
+
     items.forEach((item, i) => {
       item.classList.toggle('active', i === activeIndex);
     });
 
     if (!animate) {
       inner.style.transform = 'translateX(' + target + 'px)';
+      inner.style.visibility = '';
       return;
     }
 
