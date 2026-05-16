@@ -501,15 +501,12 @@ function renderMilestones() {
   let html = '';
   let lastYear = null;
   MILESTONES.forEach((m, i) => {
-    if (lastYear !== null && m.year !== lastYear) {
-      html += `<div class="milestone-year-mark" data-year="${lastYear}"><div class="milestone-year-bar"></div><span class="milestone-year-label">${lastYear}</span></div>`;
+    if (lastYear === null || m.year !== lastYear) {
+      html += `<div class="milestone-year-mark" data-year="${m.year}"><div class="milestone-year-bar"></div><span class="milestone-year-label">${m.year}</span></div>`;
     }
     lastYear = m.year;
-    html += `<div class="milestone-item" data-index="${i}"><span class="milestone-item-label" data-title="${m.title}">${m.title}</span><div class="milestone-dot-wrap"><div class="milestone-dot"></div><span class="milestone-item-date">${m.month}月${m.day}日</span></div></div>`;
+    html += `<div class="milestone-item" data-index="${i}" data-title="${m.title}"><span class="milestone-item-label">${m.title}</span><div class="milestone-dot-wrap"><div class="milestone-dot"></div><span class="milestone-item-date">${m.month}月${m.day}日</span></div></div>`;
   });
-  if (lastYear !== null) {
-    html += `<div class="milestone-year-mark" data-year="${lastYear}"><div class="milestone-year-bar"></div><span class="milestone-year-label">${lastYear}</span></div>`;
-  }
   inner.innerHTML = html;
 
   const track = document.getElementById('milestoneTrack');

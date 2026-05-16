@@ -109,55 +109,60 @@
 }
 
 [data-theme="light"] .legend-cell {
-  background: #e8ece8;
+  background: #d1d5db;
 }
 
 [data-theme="light"] .contrib-tooltip {
   background: #ffffff;
-  border-color: var(--border-medium);
+  border-color: #d1d5db;
   box-shadow: var(--shadow-sm);
 }
 
 [data-theme="light"] .milestone-item-label {
-  color: #3b4045;
+  color: #2d333a;
 }
 
 [data-theme="light"] .milestone-item-date,
 [data-theme="light"] .milestone-year-label {
-  color: #6b737c;
+  color: #4b5563;
 }
 
-[data-theme="light"] .milestone-dot {
-  background: #bcc3cc;
-}
-
+[data-theme="light"] .milestone-dot,
 [data-theme="light"] .milestone-year-bar {
-  background: #bcc3cc;
+  background: #9ca3af;
 }
 
 [data-theme="light"] .milestone-title {
-  color: #6b737c;
+  color: #4b5563;
 }
 
 [data-theme="light"] .milestone-track-inner::before {
-  background: #d0d5db;
+  background: #cbd5e1;
 }
 
-[data-theme="light"] .milestone-year-mark .milestone-dot {
-  background: #bcc3cc;
+[data-theme="light"] .milestone-nav {
+  border-color: #d1d5db;
 }
 
 [data-theme="light"] .contrib-labels,
 [data-theme="light"] .contrib-months {
-  color: #6b737c;
+  color: #4b5563;
 }
 
 [data-theme="light"] .contrib-stats {
-  color: #6b737c;
+  color: #4b5563;
 }
 
 [data-theme="light"] .contrib-legend {
-  color: #6b737c;
+  color: #4b5563;
+}
+
+[data-theme="light"] .contrib-nav {
+  border-color: #d1d5db;
+}
+
+[data-theme="light"] .contrib-year-input {
+  border-color: #d1d5db;
 }
 
 *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
@@ -567,7 +572,8 @@ body {
   border-radius: var(--radius-lg);
   padding: 16px 20px 14px;
   box-shadow: var(--shadow-sm);
-  border-top: 2px solid rgba(0, 214, 143, 0.12);
+  border-top: 2px solid var(--accent-green);
+  border-top-color: color-mix(in srgb, var(--accent-green) 12%, transparent);
   user-select: none;
 }
 
@@ -614,7 +620,7 @@ body {
 .milestone-nav:hover {
   border-color: var(--accent-green);
   color: var(--accent-green);
-  background: rgba(0, 214, 143, 0.06);
+  background: color-mix(in srgb, var(--accent-green) 8%, transparent);
 }
 
 .milestone-nav:active {
@@ -676,12 +682,12 @@ body {
   transition: color var(--transition);
 }
 
-.milestone-item-label:hover::after {
+.milestone-item:hover::after {
   content: attr(data-title);
   position: absolute;
-  bottom: 100%;
+  top: 0;
   left: 50%;
-  transform: translateX(-50%);
+  transform: translateX(-50%) translateY(-100%);
   background: var(--bg-card);
   border: 1px solid var(--border-medium);
   border-radius: var(--radius-sm);
@@ -693,7 +699,7 @@ body {
   box-shadow: var(--shadow-sm);
   z-index: 100;
   pointer-events: none;
-  margin-bottom: 4px;
+  margin-top: -4px;
 }
 
 .milestone-item.active .milestone-item-label {
@@ -722,7 +728,7 @@ body {
   width: 11px;
   height: 11px;
   background: var(--accent-green);
-  box-shadow: 0 0 0 3px rgba(0, 214, 143, 0.15);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent-green) 20%, transparent);
 }
 
 .milestone-item-date {
@@ -840,7 +846,7 @@ body {
   padding: 20px 24px;
   box-shadow: var(--shadow-sm);
   border-top: 2px solid var(--accent-green);
-  border-top-color: rgba(0, 214, 143, 0.15);
+  border-top-color: color-mix(in srgb, var(--accent-green) 15%, transparent);
 }
 
 .contrib-header {
@@ -870,7 +876,7 @@ body {
 .contrib-nav:hover {
   border-color: var(--accent-green);
   color: var(--accent-green);
-  background: rgba(0, 214, 143, 0.06);
+  background: color-mix(in srgb, var(--accent-green) 8%, transparent);
 }
 
 .contrib-year-input {
