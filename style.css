@@ -645,7 +645,6 @@ body {
   padding: 0 4px;
   will-change: transform;
   overflow: hidden;
-  transition: opacity 0.35s ease;
 }
 
 .milestone-track-inner::before {

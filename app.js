@@ -507,14 +507,12 @@ function renderMilestones() {
     lastYear = m.year;
     html += `<div class="milestone-item" data-index="${i}" data-title="${m.title}"><span class="milestone-item-label">${m.title}</span><div class="milestone-dot-wrap"><div class="milestone-dot"></div><span class="milestone-item-date">${m.month}月${m.day}日</span></div></div>`;
   });
-  // Set low opacity initially to prevent flash, fade in after positioning
-  inner.style.opacity = '0.01';
   inner.innerHTML = html;
 
   const track = document.getElementById('milestoneTrack');
   const tooltip = document.getElementById('milestoneTooltip');
   const items = inner.querySelectorAll('.milestone-item');
-  if (items.length === 0) { inner.style.opacity = ''; return; }
+  if (items.length === 0) return;
 
   let activeIndex = items.length - 1;
   let animating = false;
@@ -550,7 +548,6 @@ function renderMilestones() {
 
     if (!animate) {
       inner.style.transform = 'translateX(' + target + 'px)';
-      inner.style.opacity = '';
       return;
     }
 
