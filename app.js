@@ -26,6 +26,8 @@ const prevYear = document.getElementById("prevYear");
 const nextYear = document.getElementById("nextYear");
 const contribYearInput = document.getElementById("contribYear");
 const contribGrid = document.getElementById("contribGrid");
+const contribMonths = document.getElementById("contribMonths");
+const contribStats = document.getElementById("contribStats");
 const contribTooltip = document.getElementById("contribTooltip");
 const contribScroll = document.getElementById("contribScroll");
 
@@ -113,17 +115,21 @@ function renderContributionGraph(year) {
   const endDate = new Date(year, 11, 31);
   const startDayOfWeek = startDate.getDay();
 
-  const msPerDay = 24 * 60 * 60 * 1000;
+  const msPerDay = 86400000;
   const totalDays = Math.round((endDate - startDate) / msPerDay) + 1;
-
   const totalCells = startDayOfWeek + totalDays;
   const totalWeeks = Math.ceil(totalCells / 7);
 
   const cellDate = new Date(startDate);
   cellDate.setDate(cellDate.getDate() - startDayOfWeek);
 
+  const now = new Date();
+  const ms30 = 30 * msPerDay;
+  const ms7 = 7 * msPerDay;
+
   const diarySet = getDiarySet();
-  let html = '';
+  let diaryCount = 0;
+  let gridHtml = '';
 
   for (let col = 0; col < totalWeeks; col++) {
     for (let row = 0; row < 7; row++) {
@@ -136,17 +142,22 @@ function renderContributionGraph(year) {
       const isToday = dateStr === TODAY;
 
       let cls = 'contrib-cell';
-      if (hasDiary) cls += ' has-diary';
-      if (!isInYear) cls += ' other-year';
       if (isToday) cls += ' today-cell';
+      if (!isInYear) { cls += ' other-year'; }
+      else if (hasDiary) {
+        diaryCount++;
+        const age = now.getTime() - cellDate.getTime();
+        if (age < ms7) cls += ' has-diary l3';
+        else if (age < ms30) cls += ' has-diary l2';
+        else cls += ' has-diary l1';
+      }
 
-      html += `<div class="${cls}" data-date="${dateStr}"></div>`;
-
+      gridHtml += `<div class="${cls}" data-date="${dateStr}"></div>`;
       cellDate.setDate(cellDate.getDate() + 1);
     }
   }
 
-  contribGrid.innerHTML = html;
+  contribGrid.innerHTML = gridHtml;
 
   contribGrid.querySelectorAll(".contrib-cell").forEach(el => {
     el.addEventListener("click", () => {
@@ -168,6 +179,34 @@ function renderContributionGraph(year) {
       contribTooltip.style.display = "none";
     });
   });
+
+  renderMonthLabels(year, startDayOfWeek, totalWeeks);
+  contribStats.innerHTML = `<strong>${diaryCount}</strong> 天在本年有记录`;
+}
+
+function renderMonthLabels(year, startDayOfWeek, totalWeeks) {
+  const startDate = new Date(year, 0, 1);
+  const monthNames = ["1月","2月","3月","4月","5月","6月","7月","8月","9月","10月","11月","12月"];
+
+  const positions = [];
+  for (let m = 0; m < 12; m++) {
+    const firstDay = new Date(year, m, 1);
+    const dayOfYear = Math.round((firstDay - startDate) / 86400000);
+    const col = Math.floor((startDayOfWeek + dayOfYear) / 7);
+    if (positions.length === 0 || col > positions[positions.length - 1].col) {
+      positions.push({ col, label: monthNames[m] });
+    }
+  }
+
+  const cellW = 17;
+  let html = '';
+  for (let i = 0; i < positions.length; i++) {
+    const cur = positions[i];
+    const nextCol = positions[i + 1] ? positions[i + 1].col : totalWeeks;
+    const width = (nextCol - cur.col) * cellW - 3;
+    html += `<span style="width:${width}px">${cur.label}</span>`;
+  }
+  contribMonths.innerHTML = html;
 }
 
 window.addEventListener("scroll", () => {
