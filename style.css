@@ -100,19 +100,19 @@
   background: rgba(0, 0, 0, 0.3);
 }
 
-[data-theme="light"] .contrib-cell {
+[data-theme="light"] .insight-cell {
   background: #e8ece8;
 }
 
-[data-theme="light"] .contrib-cell.has-diary {
+[data-theme="light"] .insight-cell.has-diary {
   background: var(--accent-green);
 }
 
-[data-theme="light"] .legend-cell {
+[data-theme="light"] .insight-legend-cell {
   background: #e8ece8;
 }
 
-[data-theme="light"] .contrib-tooltip {
+[data-theme="light"] .insight-tooltip {
   background: #ffffff;
   border-color: var(--border-medium);
   box-shadow: var(--shadow-sm);
@@ -517,290 +517,45 @@ body {
   color: var(--text-muted);
 }
 
-/* ============ MILESTONE TIMELINE ============ */
-.milestone-section {
+/* ============ INSIGHT SECTION (Milestone + Contribution Graph) ============ */
+.insight-section {
   max-width: 1000px;
   margin: 0 auto;
   background: var(--bg-card);
   border-radius: var(--radius-lg);
-  padding: 16px 20px 14px;
+  padding: 18px 24px 16px;
   box-shadow: var(--shadow-sm);
   border-top: 2px solid rgba(0, 214, 143, 0.12);
   user-select: none;
 }
 
-.milestone-header {
+.insight-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 6px;
-  padding: 0 4px;
+  margin-bottom: 10px;
 }
 
-.milestone-title {
+.insight-header-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.insight-header-right {
+  display: flex;
+  align-items: center;
+}
+
+.insight-milestone-title {
   font-family: var(--font-mono);
   font-size: 0.6rem;
   font-weight: 600;
   color: var(--text-muted);
   letter-spacing: 2px;
-  text-transform: uppercase;
 }
 
-.milestone-years {
-  font-family: var(--font-mono);
-  font-size: 0.6rem;
-  color: var(--text-muted);
-}
-
-.milestone-body {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.milestone-nav {
-  flex-shrink: 0;
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
-  border: 1px solid var(--border-medium);
-  background: transparent;
-  color: var(--text-secondary);
-  font-size: 1.1rem;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all var(--transition);
-  line-height: 1;
-  padding: 0;
-}
-
-.milestone-nav:hover {
-  border-color: var(--accent-green);
-  color: var(--accent-green);
-  background: rgba(0, 214, 143, 0.06);
-}
-
-.milestone-nav:active {
-  transform: scale(0.92);
-}
-
-.milestone-track {
-  flex: 1;
-  overflow: hidden;
-  position: relative;
-  height: 72px;
-  min-width: 0;
-}
-
-.milestone-track-inner {
-  display: flex;
-  align-items: center;
-  height: 100%;
-  position: relative;
-  padding: 0 4px;
-  will-change: transform;
-}
-
-.milestone-track-inner::before {
-  content: '';
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 19px;
-  height: 1px;
-  background: var(--border-subtle);
-  pointer-events: none;
-}
-
-.milestone-item {
-  flex-shrink: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: flex-end;
-  height: 100%;
-  position: relative;
-  padding: 0 12px;
-  cursor: default;
-  transition: opacity var(--transition);
-}
-
-.milestone-item-label {
-  font-family: var(--font-sans);
-  font-size: 0.75rem;
-  color: var(--text-secondary);
-  text-align: center;
-  line-height: 1.3;
-  max-width: 80px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  margin-bottom: 6px;
-  transition: color var(--transition);
-}
-
-.milestone-item.active .milestone-item-label {
-  color: var(--accent-green);
-  font-weight: 600;
-}
-
-.milestone-dot-wrap {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  position: relative;
-  z-index: 1;
-}
-
-.milestone-dot {
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background: var(--border-medium);
-  transition: all var(--transition);
-  flex-shrink: 0;
-}
-
-.milestone-item.active .milestone-dot {
-  width: 11px;
-  height: 11px;
-  background: var(--accent-green);
-  box-shadow: 0 0 0 3px rgba(0, 214, 143, 0.15);
-}
-
-.milestone-item-date {
-  font-family: var(--font-mono);
-  font-size: 0.55rem;
-  color: var(--text-muted);
-  margin-top: 3px;
-  white-space: nowrap;
-  transition: color var(--transition);
-}
-
-.milestone-item.active .milestone-item-date {
-  color: var(--accent-green);
-}
-
-.milestone-year-mark {
-  flex-shrink: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: flex-end;
-  height: 100%;
-  position: relative;
-  padding: 0 10px;
-  cursor: default;
-}
-
-.milestone-year-bar {
-  width: 2px;
-  height: 16px;
-  border-radius: 1px;
-  background: var(--border-medium);
-  flex-shrink: 0;
-}
-
-.milestone-year-label {
-  font-family: var(--font-mono);
-  font-size: 0.55rem;
-  color: var(--text-muted);
-  margin-top: 3px;
-  font-weight: 600;
-  white-space: nowrap;
-}
-
-@media (max-width: 860px) {
-  .milestone-section {
-    padding: 14px 14px 12px;
-  }
-
-  .milestone-title {
-    font-size: 0.55rem;
-  }
-
-  .milestone-years {
-    font-size: 0.55rem;
-  }
-
-  .milestone-track {
-    height: 62px;
-  }
-
-  .milestone-item {
-    padding: 0 10px;
-  }
-
-  .milestone-item-label {
-    font-size: 0.68rem;
-    max-width: 68px;
-  }
-
-  .milestone-nav {
-    width: 22px;
-    height: 22px;
-    font-size: 1rem;
-  }
-
-  .milestone-dot {
-    width: 6px;
-    height: 6px;
-  }
-
-  .milestone-item.active .milestone-dot {
-    width: 9px;
-    height: 9px;
-  }
-
-  .milestone-item-date {
-    font-size: 0.5rem;
-  }
-}
-
-@media (max-width: 480px) {
-  .milestone-body {
-    gap: 4px;
-  }
-
-  .milestone-nav {
-    width: 20px;
-    height: 20px;
-    font-size: 0.9rem;
-  }
-
-  .milestone-item {
-    padding: 0 8px;
-  }
-
-  .milestone-item-label {
-    font-size: 0.62rem;
-    max-width: 56px;
-  }
-}
-
-/* ============ CONTRIBUTION GRAPH ============ */
-.contrib-section {
-  max-width: 1000px;
-  margin: 32px auto 0;
-  background: var(--bg-card);
-  border-radius: var(--radius-lg);
-  padding: 20px 24px;
-  box-shadow: var(--shadow-sm);
-  border-top: 2px solid var(--accent-green);
-  border-top-color: rgba(0, 214, 143, 0.15);
-}
-
-.contrib-header {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  margin-bottom: 14px;
-}
-
-.contrib-nav {
+.insight-nav {
   background: transparent;
   border: 1px solid var(--border-medium);
   color: var(--text-secondary);
@@ -816,13 +571,13 @@ body {
   padding: 0;
 }
 
-.contrib-nav:hover {
+.insight-nav:hover {
   border-color: var(--accent-green);
   color: var(--accent-green);
   background: rgba(0, 214, 143, 0.06);
 }
 
-.contrib-year-input {
+.insight-year-input {
   font-family: var(--font-mono);
   font-size: 0.85rem;
   font-weight: 600;
@@ -838,23 +593,166 @@ body {
   -moz-appearance: textfield;
 }
 
-.contrib-year-input::-webkit-inner-spin-button,
-.contrib-year-input::-webkit-outer-spin-button {
+.insight-year-input::-webkit-inner-spin-button,
+.insight-year-input::-webkit-outer-spin-button {
   -webkit-appearance: none;
   margin: 0;
 }
 
-.contrib-year-input:focus {
+.insight-year-input:focus {
   border-color: var(--accent-green);
 }
 
-.contrib-wrapper {
+/* ── Milestone Timeline ── */
+.insight-milestone {
+  position: relative;
+  margin-bottom: 12px;
+}
+
+.insight-milestone-track {
+  overflow: hidden;
+  position: relative;
+  height: 72px;
+}
+
+.insight-milestone-inner {
+  display: flex;
+  align-items: center;
+  height: 100%;
+  position: relative;
+  padding: 0 4px;
+  will-change: transform;
+}
+
+.insight-milestone-inner::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 19px;
+  height: 1px;
+  background: var(--border-subtle);
+  pointer-events: none;
+}
+
+.insight-milestone-item {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  height: 100%;
+  position: relative;
+  padding: 0 12px;
+  cursor: default;
+}
+
+.insight-milestone-item-label {
+  font-family: var(--font-sans);
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  text-align: center;
+  line-height: 1.3;
+  max-width: 80px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-bottom: 6px;
+  transition: color var(--transition);
+}
+
+.insight-milestone-item.active .insight-milestone-item-label {
+  color: var(--accent-green);
+  font-weight: 600;
+}
+
+.insight-milestone-dot-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  z-index: 1;
+}
+
+.insight-milestone-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--border-medium);
+  transition: all var(--transition);
+  flex-shrink: 0;
+}
+
+.insight-milestone-item.active .insight-milestone-dot {
+  width: 11px;
+  height: 11px;
+  background: var(--accent-green);
+  box-shadow: 0 0 0 3px rgba(0, 214, 143, 0.15);
+}
+
+.insight-milestone-item-date {
+  font-family: var(--font-mono);
+  font-size: 0.55rem;
+  color: var(--text-muted);
+  margin-top: 3px;
+  white-space: nowrap;
+  transition: color var(--transition);
+}
+
+.insight-milestone-item.active .insight-milestone-item-date {
+  color: var(--accent-green);
+}
+
+.insight-milestone-year-mark {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  height: 100%;
+  position: relative;
+  padding: 0 10px;
+  cursor: default;
+}
+
+.insight-milestone-year-bar {
+  width: 2px;
+  height: 16px;
+  border-radius: 1px;
+  background: var(--border-medium);
+  flex-shrink: 0;
+}
+
+.insight-milestone-year-label {
+  font-family: var(--font-mono);
+  font-size: 0.55rem;
+  color: var(--text-muted);
+  margin-top: 3px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.insight-empty-state {
+  display: none;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  text-align: center;
+  line-height: 72px;
+}
+
+.insight-empty-state.visible {
+  display: block;
+}
+
+/* ── Contribution Graph ── */
+.insight-wrapper {
   display: flex;
   gap: 6px;
   align-items: flex-start;
 }
 
-.contrib-labels {
+.insight-labels {
   display: grid;
   grid-template-rows: repeat(7, 14px);
   gap: 3px;
@@ -863,16 +761,16 @@ body {
   color: var(--text-muted);
 }
 
-.contrib-labels span {
+.insight-labels span {
   display: flex;
   align-items: center;
 }
 
-.contrib-labels span:nth-child(1) { grid-row: 2; }
-.contrib-labels span:nth-child(2) { grid-row: 4; }
-.contrib-labels span:nth-child(3) { grid-row: 6; }
+.insight-labels span:nth-child(1) { grid-row: 2; }
+.insight-labels span:nth-child(2) { grid-row: 4; }
+.insight-labels span:nth-child(3) { grid-row: 6; }
 
-.contrib-scroll {
+.insight-scroll {
   flex: 1;
   min-width: 0;
   overflow-x: auto;
@@ -882,27 +780,18 @@ body {
   -ms-overflow-style: none;
 }
 
-.contrib-scroll::-webkit-scrollbar {
-  display: none;
-}
+.insight-scroll::-webkit-scrollbar { display: none; }
 
-.contrib-months {
+.insight-months {
   display: flex;
   gap: 3px;
   margin-bottom: 4px;
-  padding-left: 0;
   font-family: var(--font-mono);
   font-size: 0.55rem;
   color: var(--text-muted);
 }
 
-.contrib-months span {
-  flex-shrink: 0;
-  text-align: left;
-  padding-left: 0;
-}
-
-.contrib-grid {
+.insight-grid {
   display: grid;
   grid-template-rows: repeat(7, 14px);
   grid-auto-flow: column;
@@ -910,7 +799,7 @@ body {
   padding-bottom: 4px;
 }
 
-.contrib-cell {
+.insight-cell {
   width: 14px;
   height: 14px;
   border-radius: 2px;
@@ -920,41 +809,41 @@ body {
   position: relative;
 }
 
-.contrib-cell:hover {
+.insight-cell:hover {
   z-index: 1;
   transform: scale(1.4);
   outline: 1px solid var(--accent-green);
 }
 
-.contrib-cell.has-diary {
+.insight-cell.has-diary {
   background: var(--accent-green);
   opacity: 0.45;
 }
 
-.contrib-cell.has-diary.l2 {
+.insight-cell.has-diary.l2 {
   opacity: 0.7;
 }
 
-.contrib-cell.has-diary.l3 {
+.insight-cell.has-diary.l3 {
   opacity: 1;
 }
 
-.contrib-cell.other-year {
+.insight-cell.other-year {
   opacity: 0.15;
 }
 
-.contrib-cell.other-year.has-diary {
+.insight-cell.other-year.has-diary {
   opacity: 0.3;
 }
 
-.contrib-cell.today-cell {
+.insight-cell.today-cell {
   outline: 2px solid var(--accent-green);
   outline-offset: -1px;
   z-index: 2;
 }
 
 /* ── Yearly Stats ── */
-.contrib-stats {
+.insight-stats {
   text-align: center;
   margin-top: 10px;
   font-family: var(--font-mono);
@@ -962,13 +851,13 @@ body {
   color: var(--text-muted);
 }
 
-.contrib-stats strong {
+.insight-stats strong {
   color: var(--accent-green);
   font-weight: 600;
 }
 
 /* ── Legend ── */
-.contrib-legend {
+.insight-legend {
   display: flex;
   align-items: center;
   justify-content: flex-end;
@@ -979,29 +868,29 @@ body {
   color: var(--text-muted);
 }
 
-.legend-cell {
+.insight-legend-cell {
   width: 12px;
   height: 12px;
   border-radius: 2px;
   background: var(--bg-root);
 }
 
-.legend-cell.l1 {
+.insight-legend-cell.l1 {
   background: var(--accent-green);
   opacity: 0.45;
 }
 
-.legend-cell.l2 {
+.insight-legend-cell.l2 {
   background: var(--accent-green);
   opacity: 0.7;
 }
 
-.legend-cell.l3 {
+.insight-legend-cell.l3 {
   background: var(--accent-green);
   opacity: 1;
 }
 
-.contrib-tooltip {
+.insight-tooltip {
   display: none;
   position: fixed;
   z-index: 200;
@@ -1652,13 +1541,55 @@ body {
     line-height: 1.8;
   }
 
-  .contrib-section {
-    padding: 16px;
+  .insight-section {
+    padding: 14px 16px 12px;
   }
 
-  .contrib-year-input {
+  .insight-year-input {
     width: 70px;
     font-size: 0.78rem;
+  }
+
+  .insight-nav {
+    width: 26px;
+    height: 26px;
+  }
+
+  .insight-milestone-title {
+    font-size: 0.55rem;
+  }
+
+  .insight-milestone-track {
+    height: 62px;
+  }
+
+  .insight-milestone-item {
+    padding: 0 10px;
+  }
+
+  .insight-milestone-item-label {
+    font-size: 0.68rem;
+    max-width: 68px;
+  }
+
+  .insight-milestone-dot {
+    width: 6px;
+    height: 6px;
+  }
+
+  .insight-milestone-item.active .insight-milestone-dot {
+    width: 9px;
+    height: 9px;
+  }
+
+  .insight-milestone-item-date,
+  .insight-milestone-year-label {
+    font-size: 0.5rem;
+  }
+
+  .insight-empty-state {
+    font-size: 0.65rem;
+    line-height: 62px;
   }
 
   .comments-section {
@@ -1707,6 +1638,50 @@ body {
   }
   .gt-container .gt-header textarea {
     font-size: 0.8rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .insight-year-input {
+    width: 60px;
+    font-size: 0.72rem;
+  }
+
+  .insight-nav {
+    width: 24px;
+    height: 24px;
+  }
+
+  .insight-header {
+    gap: 4px;
+  }
+
+  .insight-milestone-title {
+    font-size: 0.5rem;
+  }
+
+  .insight-milestone-item {
+    padding: 0 8px;
+  }
+
+  .insight-milestone-item-label {
+    font-size: 0.62rem;
+    max-width: 56px;
+  }
+
+  .insight-milestone-dot {
+    width: 5px;
+    height: 5px;
+  }
+
+  .insight-milestone-item.active .insight-milestone-dot {
+    width: 8px;
+    height: 8px;
+  }
+
+  .insight-empty-state {
+    font-size: 0.6rem;
+    line-height: 56px;
   }
 }
 

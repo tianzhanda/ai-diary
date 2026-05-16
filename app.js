@@ -7,7 +7,7 @@ let diaryDates = [];
 let diaryListData = [];
 let loadAbort = null;
 let apiAvailable = true;
-let contribYear;
+let insightYear;
 
 const diaryTitle = document.getElementById("diaryTitle");
 const diaryDate = document.getElementById("diaryDate");
@@ -24,12 +24,12 @@ const searchClose = document.getElementById("searchClose");
 
 const prevYear = document.getElementById("prevYear");
 const nextYear = document.getElementById("nextYear");
-const contribYearInput = document.getElementById("contribYear");
-const contribGrid = document.getElementById("contribGrid");
-const contribMonths = document.getElementById("contribMonths");
-const contribStats = document.getElementById("contribStats");
-const contribTooltip = document.getElementById("contribTooltip");
-const contribScroll = document.getElementById("contribScroll");
+const insightYearInput = document.getElementById("insightYear");
+const insightGrid = document.getElementById("insightGrid");
+const insightMonths = document.getElementById("insightMonths");
+const insightStats = document.getElementById("insightStats");
+const insightTooltip = document.getElementById("insightTooltip");
+const insightScroll = document.getElementById("insightScroll");
 
 async function loadAllData() {
   try {
@@ -60,8 +60,8 @@ async function loadAllData() {
   }
 
   const now = new Date();
-  contribYear = now.getFullYear();
-  contribYearInput.value = contribYear;
+  insightYear = now.getFullYear();
+  insightYearInput.value = insightYear;
 
   const initialDate = loadFromUrl();
   currentDate = initialDate;
@@ -141,7 +141,7 @@ function renderContributionGraph(year) {
       const hasDiary = diarySet.has(dateStr);
       const isToday = dateStr === TODAY;
 
-      let cls = 'contrib-cell';
+      let cls = 'insight-cell';
       if (isToday) cls += ' today-cell';
       if (!isInYear) { cls += ' other-year'; }
       else if (hasDiary) {
@@ -157,9 +157,9 @@ function renderContributionGraph(year) {
     }
   }
 
-  contribGrid.innerHTML = gridHtml;
+  insightGrid.innerHTML = gridHtml;
 
-  contribGrid.querySelectorAll(".contrib-cell").forEach(el => {
+  insightGrid.querySelectorAll(".insight-cell").forEach(el => {
     el.addEventListener("click", () => {
       const date = el.dataset.date;
       if (date) selectDate(date);
@@ -168,20 +168,20 @@ function renderContributionGraph(year) {
     el.addEventListener("mouseenter", () => {
       const date = el.dataset.date;
       if (!date) return;
-      contribTooltip.textContent = formatDateDisplay(date);
+      insightTooltip.textContent = formatDateDisplay(date);
       const rect = el.getBoundingClientRect();
-      contribTooltip.style.left = `${rect.left + rect.width / 2}px`;
-      contribTooltip.style.top = `${rect.top}px`;
-      contribTooltip.style.display = "block";
+      insightTooltip.style.left = `${rect.left + rect.width / 2}px`;
+      insightTooltip.style.top = `${rect.top}px`;
+      insightTooltip.style.display = "block";
     });
 
     el.addEventListener("mouseleave", () => {
-      contribTooltip.style.display = "none";
+      insightTooltip.style.display = "none";
     });
   });
 
   renderMonthLabels(year, startDayOfWeek, totalWeeks);
-  contribStats.innerHTML = `已记录 <strong>${diaryDates.length}</strong> 天`;
+  insightStats.innerHTML = `已记录 <strong>${diaryDates.length}</strong> 天`;
 }
 
 function renderMonthLabels(year, startDayOfWeek, totalWeeks) {
@@ -206,42 +206,44 @@ function renderMonthLabels(year, startDayOfWeek, totalWeeks) {
     const width = (nextCol - cur.col) * cellW - 3;
     html += `<span style="width:${width}px">${cur.label}</span>`;
   }
-  contribMonths.innerHTML = html;
+  insightMonths.innerHTML = html;
 }
 
 window.addEventListener("scroll", () => {
-  contribTooltip.style.display = "none";
+  insightTooltip.style.display = "none";
 }, { passive: true });
 
+function switchInsightYear(year, direction) {
+  let val = year;
+  if (isNaN(val) || val < 2020) val = 2020;
+  if (val > 2030) val = 2030;
+  insightYear = val;
+  insightYearInput.value = insightYear;
+  renderContributionGraph(insightYear);
+  renderMilestones(insightYear, direction);
+}
+
 prevYear.addEventListener("click", () => {
-  contribYear--;
-  contribYearInput.value = contribYear;
-  renderContributionGraph(contribYear);
+  switchInsightYear(insightYear - 1);
 });
 
 nextYear.addEventListener("click", () => {
-  contribYear++;
-  contribYearInput.value = contribYear;
-  renderContributionGraph(contribYear);
+  switchInsightYear(insightYear + 1);
 });
 
-contribYearInput.addEventListener("change", () => {
-  let val = parseInt(contribYearInput.value);
-  if (isNaN(val) || val < 2020) val = 2020;
-  if (val > 2030) val = 2030;
-  contribYear = val;
-  contribYearInput.value = contribYear;
-  renderContributionGraph(contribYear);
+insightYearInput.addEventListener("change", () => {
+  switchInsightYear(parseInt(insightYearInput.value));
 });
 
-contribScroll.addEventListener("wheel", (e) => {
-  contribScroll.scrollLeft += e.deltaY;
+insightScroll.addEventListener("wheel", (e) => {
+  insightScroll.scrollLeft += e.deltaY;
   e.preventDefault();
 }, { passive: false });
 
 async function selectDate(dateStr) {
   currentDate = dateStr;
-  renderContributionGraph(contribYear);
+  renderContributionGraph(insightYear);
+  renderMilestones(insightYear);
   showDiaryLoading();
   updateUrl(dateStr);
 
@@ -488,159 +490,217 @@ window.matchMedia("(prefers-color-scheme: light)").addEventListener("change", (e
 
 /* ============ MILESTONE TIMELINE ============ */
 
-function renderMilestones() {
-  const section = document.getElementById('milestoneSection');
-  const inner = document.getElementById('milestoneTrackInner');
-  const yearSpan = document.getElementById('milestoneYears');
+var milestoneTrackEl, milestoneInnerEl, milestoneItems, milestoneAnimating = false, milestonePending = null, milestoneIndex = -1;
+
+function getAdjacentYear(year, dir) {
+  var allYears = [...new Set(MILESTONES.map(function(m) { return m.year; }))].sort();
+  var idx = allYears.indexOf(year);
+  if (dir === 'prev' && idx > 0) return allYears[idx - 1];
+  if (dir === 'next' && idx < allYears.length - 1) return allYears[idx + 1];
+  return null;
+}
+
+function renderMilestones(year, direction) {
+  var emptyEl = document.getElementById('insightEmptyState');
+  var track = document.getElementById('insightMilestoneTrack');
+  var inner = document.getElementById('insightMilestoneInner');
 
   if (typeof MILESTONES === 'undefined' || !MILESTONES || MILESTONES.length === 0) {
-    section.style.display = 'none';
+    track.style.display = 'none';
     return;
   }
-  section.style.display = '';
+  track.style.display = '';
 
-  const years = [...new Set(MILESTONES.map(m => m.year))].sort();
-  yearSpan.textContent = `${years[0]} — ${years[years.length - 1]}`;
+  milestoneTrackEl = track;
+  milestoneInnerEl = inner;
 
-  let html = '';
-  let lastYear = null;
-  MILESTONES.forEach((m, i) => {
+  var filtered = year ? MILESTONES.filter(function(m) { return m.year === year; }) : MILESTONES;
+
+  if (filtered.length === 0) {
+    inner.innerHTML = '';
+    emptyEl.classList.add('visible');
+    milestoneItems = [];
+    milestoneIndex = -1;
+    return;
+  }
+  emptyEl.classList.remove('visible');
+
+  var html = '';
+  var lastYear = null;
+  filtered.forEach(function(m, i) {
     if (lastYear !== null && m.year !== lastYear) {
-      html += `<div class="milestone-year-mark" data-year="${lastYear}"><div class="milestone-year-bar"></div><span class="milestone-year-label">${lastYear}</span></div>`;
+      html += '<div class="insight-milestone-year-mark"><div class="insight-milestone-year-bar"></div><span class="insight-milestone-year-label">' + lastYear + '</span></div>';
     }
     lastYear = m.year;
-    html += `<div class="milestone-item" data-index="${i}"><span class="milestone-item-label">${m.title}</span><div class="milestone-dot-wrap"><div class="milestone-dot"></div><span class="milestone-item-date">${m.month}月${m.day}日</span></div></div>`;
+    html += '<div class="insight-milestone-item" data-index="' + i + '"><span class="insight-milestone-item-label">' + m.title + '</span><div class="insight-milestone-dot-wrap"><div class="insight-milestone-dot"></div><span class="insight-milestone-item-date">' + m.month + '月' + m.day + '日</span></div></div>';
   });
   if (lastYear !== null) {
-    html += `<div class="milestone-year-mark" data-year="${lastYear}"><div class="milestone-year-bar"></div><span class="milestone-year-label">${lastYear}</span></div>`;
+    html += '<div class="insight-milestone-year-mark"><div class="insight-milestone-year-bar"></div><span class="insight-milestone-year-label">' + lastYear + '</span></div>';
   }
   inner.innerHTML = html;
 
-  const track = document.getElementById('milestoneTrack');
-  const items = inner.querySelectorAll('.milestone-item');
-  if (items.length === 0) return;
+  milestoneItems = inner.querySelectorAll('.insight-milestone-item');
 
-  let activeIndex = items.length - 1;
-  let animating = false;
-  let pendingIndex = null;
+  if (direction === 'prev') milestoneIndex = milestoneItems.length - 1;
+  else if (direction === 'next') milestoneIndex = 0;
+  else milestoneIndex = milestoneItems.length - 1;
 
-  function getItemOffsets() {
-    const offsets = [];
-    items.forEach(item => {
-      const itemRect = item.getBoundingClientRect();
-      const innerRect = inner.getBoundingClientRect();
-      const itemCenter = itemRect.left + itemRect.width / 2;
-      const innerCenter = innerRect.left + innerRect.width / 2;
-      offsets.push(itemCenter - innerCenter);
-    });
-    return offsets;
-  }
-
-  function snapTo(index, animate) {
-    if (index < 0 || index >= items.length) return;
-    if (animate === undefined) animate = true;
-    if (animate && animating) {
-      pendingIndex = index;
-      return;
-    }
-    activeIndex = index;
-    pendingIndex = null;
-    const offsets = getItemOffsets();
-    const target = -(offsets[activeIndex]);
-
-    items.forEach((item, i) => {
-      item.classList.toggle('active', i === activeIndex);
-    });
-
-    if (!animate) {
-      inner.style.transform = 'translateX(' + target + 'px)';
-      return;
-    }
-
-    animating = true;
-    const start = parseFloat(inner.style.transform.replace('translateX(', '').replace('px)', '')) || 0;
-    const diff = target - start;
-    if (Math.abs(diff) < 0.5) {
-      animating = false;
-      if (pendingIndex !== null) snapTo(pendingIndex, true);
-      return;
-    }
-
-    const duration = 420;
-    const startTime = performance.now();
-
-    function easeOutQuart(t) {
-      return 1 - Math.pow(1 - t, 4);
-    }
-
-    function step(now) {
-      const elapsed = now - startTime;
-      const t = Math.min(elapsed / duration, 1);
-      const eased = easeOutQuart(t);
-      inner.style.transform = 'translateX(' + (start + diff * eased) + 'px)';
-      if (t < 1) {
-        requestAnimationFrame(step);
-      } else {
-        inner.style.transform = 'translateX(' + target + 'px)';
-        animating = false;
-        if (pendingIndex !== null) snapTo(pendingIndex, true);
-      }
-    }
-    requestAnimationFrame(step);
-  }
-
-  snapTo(activeIndex, false);
-
-  track.addEventListener('wheel', function (e) {
-    if (animating) { e.preventDefault(); return; }
-    e.preventDefault();
-    if (e.deltaY > 0 && activeIndex < items.length - 1) {
-      snapTo(activeIndex + 1);
-    } else if (e.deltaY < 0 && activeIndex > 0) {
-      snapTo(activeIndex - 1);
-    }
-  }, { passive: false });
-
-  document.getElementById('milestonePrev').addEventListener('click', function () {
-    if (activeIndex > 0) snapTo(activeIndex - 1);
-  });
-  document.getElementById('milestoneNext').addEventListener('click', function () {
-    if (activeIndex < items.length - 1) snapTo(activeIndex + 1);
-  });
-
-  var touchStartX = 0, touchStartY = 0, isSwiping = false;
-  track.addEventListener('touchstart', function (e) {
-    touchStartX = e.touches[0].clientX;
-    touchStartY = e.touches[0].clientY;
-    isSwiping = false;
-  }, { passive: true });
-  track.addEventListener('touchmove', function (e) {
-    var dx = e.touches[0].clientX - touchStartX;
-    var dy = e.touches[0].clientY - touchStartY;
-    if (Math.abs(dx) > 10 || Math.abs(dy) > 10) isSwiping = true;
-  }, { passive: true });
-  track.addEventListener('touchend', function (e) {
-    if (!isSwiping) return;
-    var dx = e.changedTouches[0].clientX - touchStartX;
-    if (Math.abs(dx) > 30) {
-      if (dx < 0 && activeIndex < items.length - 1) snapTo(activeIndex + 1);
-      if (dx > 0 && activeIndex > 0) snapTo(activeIndex - 1);
-    }
-  }, { passive: true });
-
-  var resizeTimer;
-  window.addEventListener('resize', function () {
-    clearTimeout(resizeTimer);
-    resizeTimer = setTimeout(function () {
-      snapTo(activeIndex, false);
-    }, 100);
-  });
-
-  document.addEventListener('keydown', function (e) {
-    if (e.key === 'ArrowLeft' && activeIndex > 0) snapTo(activeIndex - 1);
-    if (e.key === 'ArrowRight' && activeIndex < items.length - 1) snapTo(activeIndex + 1);
-  });
+  snapTo(milestoneIndex, false);
 }
 
-renderMilestones();
+function getMilestoneOffsets() {
+  var offsets = [];
+  var trackRect = milestoneTrackEl.getBoundingClientRect();
+  var trackCenter = trackRect.left + trackRect.width / 2;
+  milestoneItems.forEach(function(item) {
+    var rect = item.getBoundingClientRect();
+    offsets.push(rect.left + rect.width / 2 - trackCenter);
+  });
+  return offsets;
+}
+
+function snapTo(index, animate) {
+  if (!milestoneItems || index < 0 || index >= milestoneItems.length) return;
+  if (animate === undefined) animate = true;
+  if (animate && milestoneAnimating) {
+    milestonePending = index;
+    return;
+  }
+  milestoneIndex = index;
+  milestonePending = null;
+  var offsets = getMilestoneOffsets();
+  var target = -(offsets[milestoneIndex]);
+
+  milestoneItems.forEach(function(item, i) {
+    if (i === milestoneIndex) item.classList.add('active');
+    else item.classList.remove('active');
+  });
+
+  if (!animate) {
+    milestoneInnerEl.style.transform = 'translateX(' + target + 'px)';
+    return;
+  }
+
+  milestoneAnimating = true;
+  var current = milestoneInnerEl.style.transform;
+  var start = 0;
+  if (current && current.indexOf('translateX') >= 0) {
+    start = parseFloat(current.replace('translateX(', '').replace('px)', '')) || 0;
+  }
+  var diff = target - start;
+  if (Math.abs(diff) < 0.5) {
+    milestoneAnimating = false;
+    if (milestonePending !== null) snapTo(milestonePending, true);
+    return;
+  }
+
+  var duration = 420;
+  var startTime = performance.now();
+
+  function easeOutQuart(t) { return 1 - Math.pow(1 - t, 4); }
+
+  function step(now) {
+    var elapsed = now - startTime;
+    var t = Math.min(elapsed / duration, 1);
+    var eased = easeOutQuart(t);
+    milestoneInnerEl.style.transform = 'translateX(' + (start + diff * eased) + 'px)';
+    if (t < 1) {
+      requestAnimationFrame(step);
+    } else {
+      milestoneInnerEl.style.transform = 'translateX(' + target + 'px)';
+      milestoneAnimating = false;
+      if (milestonePending !== null) snapTo(milestonePending, true);
+    }
+  }
+  requestAnimationFrame(step);
+}
+
+function milestoneEdgeReached(dir) {
+  if (!milestoneItems || milestoneItems.length === 0) return;
+  if (dir === 'next' && milestoneIndex >= milestoneItems.length - 1) {
+    var nextY = getAdjacentYear(insightYear, 'next');
+    if (nextY !== null) { switchInsightYear(nextY, 'next'); return true; }
+  }
+  if (dir === 'prev' && milestoneIndex <= 0) {
+    var prevY = getAdjacentYear(insightYear, 'prev');
+    if (prevY !== null) { switchInsightYear(prevY, 'prev'); return true; }
+  }
+  return false;
+}
+
+function handleMilestoneWheel(e) {
+  if (milestoneAnimating) { e.preventDefault(); return; }
+  if (!milestoneItems || milestoneItems.length === 0) return;
+  e.preventDefault();
+  if (e.deltaY > 0) {
+    if (milestoneIndex < milestoneItems.length - 1) snapTo(milestoneIndex + 1);
+    else milestoneEdgeReached('next');
+  } else {
+    if (milestoneIndex > 0) snapTo(milestoneIndex - 1);
+    else milestoneEdgeReached('prev');
+  }
+}
+
+function handleMilestoneKeydown(e) {
+  if (!milestoneItems || milestoneItems.length === 0) return;
+  if (e.key === 'ArrowRight') {
+    if (milestoneIndex < milestoneItems.length - 1) snapTo(milestoneIndex + 1);
+    else milestoneEdgeReached('next');
+  }
+  if (e.key === 'ArrowLeft') {
+    if (milestoneIndex > 0) snapTo(milestoneIndex - 1);
+    else milestoneEdgeReached('prev');
+  }
+}
+
+// Milestone wheel event
+document.getElementById('insightMilestoneTrack').addEventListener('wheel', handleMilestoneWheel, { passive: false });
+
+// Milestone touch events
+var msTouchX = 0, msTouchY = 0, msSwiping = false;
+document.getElementById('insightMilestoneTrack').addEventListener('touchstart', function(e) {
+  msTouchX = e.touches[0].clientX;
+  msTouchY = e.touches[0].clientY;
+  msSwiping = false;
+}, { passive: true });
+document.getElementById('insightMilestoneTrack').addEventListener('touchmove', function(e) {
+  var dx = e.touches[0].clientX - msTouchX;
+  var dy = e.touches[0].clientY - msTouchY;
+  if (Math.abs(dx) > 10 || Math.abs(dy) > 10) msSwiping = true;
+}, { passive: true });
+document.getElementById('insightMilestoneTrack').addEventListener('touchend', function(e) {
+  if (!msSwiping) return;
+  var dx = e.changedTouches[0].clientX - msTouchX;
+  if (Math.abs(dx) > 30) {
+    if (dx < 0) {
+      if (milestoneIndex < milestoneItems.length - 1) snapTo(milestoneIndex + 1);
+      else milestoneEdgeReached('next');
+    } else {
+      if (milestoneIndex > 0) snapTo(milestoneIndex - 1);
+      else milestoneEdgeReached('prev');
+    }
+  }
+}, { passive: true });
+
+// Milestone keyboard events
+document.addEventListener('keydown', function(e) {
+  if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+  if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
+    // Only if not in search overlay
+    if (searchOverlay.classList.contains('active')) return;
+    handleMilestoneKeydown(e);
+  }
+});
+
+// Milestone resize handler
+var msResizeTimer;
+window.addEventListener('resize', function() {
+  clearTimeout(msResizeTimer);
+  msResizeTimer = setTimeout(function() {
+    if (milestoneIndex >= 0) snapTo(milestoneIndex, false);
+  }, 100);
+});
+
+insightYear = new Date().getFullYear();
+renderMilestones(insightYear);
 loadAllData();
