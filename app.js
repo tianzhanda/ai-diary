@@ -510,6 +510,7 @@ function renderMilestones() {
   inner.innerHTML = html;
 
   const track = document.getElementById('milestoneTrack');
+  const tooltip = document.getElementById('milestoneTooltip');
   const items = inner.querySelectorAll('.milestone-item');
   if (items.length === 0) return;
 
@@ -582,7 +583,30 @@ function renderMilestones() {
     requestAnimationFrame(step);
   }
 
-  snapTo(activeIndex, false);
+  // Tooltip events
+  items.forEach(item => {
+    item.addEventListener('mouseenter', () => {
+      const title = item.dataset.title;
+      if (!title) return;
+      tooltip.textContent = title;
+      const rect = item.getBoundingClientRect();
+      tooltip.style.left = rect.left + rect.width / 2 + 'px';
+      tooltip.style.top = rect.top + 'px';
+      tooltip.style.display = 'block';
+    });
+    item.addEventListener('mouseleave', () => {
+      tooltip.style.display = 'none';
+    });
+  });
+
+  window.addEventListener('scroll', function hideMsTooltip() {
+    tooltip.style.display = 'none';
+  }, { passive: true });
+
+  // Initial snap after layout settles
+  requestAnimationFrame(function () {
+    snapTo(activeIndex, false);
+  });
 
   track.addEventListener('wheel', function (e) {
     if (animating) { e.preventDefault(); return; }
