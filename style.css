@@ -1388,6 +1388,7 @@ body {
 }
 .gt-container .gt-comment-body {
   color: var(--text-primary) !important;
+  margin-left: 42px;
 }
 .gt-container .markdown-body {
   color: var(--text-primary);
