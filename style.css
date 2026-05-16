@@ -598,7 +598,6 @@ body {
   display: flex;
   align-items: center;
   gap: 8px;
-  overflow: hidden;
 }
 
 .milestone-nav {
@@ -644,7 +643,6 @@ body {
   position: relative;
   padding: 0 4px;
   will-change: transform;
-  overflow: hidden;
 }
 
 .milestone-track-inner::before {
