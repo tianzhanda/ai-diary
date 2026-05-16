@@ -1,23 +1,14 @@
-// AI启智录 - 核心逻辑
-
-// ─── API Config ───
 const API_BASE = "https://ai-diary.3177981404.workers.dev";
 
 const TODAY = getTodayStr();
 let currentDate = TODAY;
-let diaryCache = {};     // { date: diary }
-let diaryDates = [];     // ["2026-05-15", ...]
-let loadAbort = null;    // AbortController for in-flight diary load
-let apiAvailable = true; // Tracks if Cloudflare Worker is reachable
+let diaryCache = {};
+let diaryDates = [];
+let diaryListData = [];
+let loadAbort = null;
+let apiAvailable = true;
+let contribYear;
 
-// ─── DOM refs ───
-const calendarTitle = document.getElementById("calendarTitle");
-const calendarGrid = document.getElementById("calendarGrid");
-const prevMonthBtn = document.getElementById("prevMonth");
-const nextMonthBtn = document.getElementById("nextMonth");
-const todayBtn = document.getElementById("todayBtn");
-const searchInput = document.getElementById("searchInput");
-const searchResults = document.getElementById("searchResults");
 const diaryTitle = document.getElementById("diaryTitle");
 const diaryDate = document.getElementById("diaryDate");
 const diaryModel = document.getElementById("diaryModel");
@@ -25,14 +16,26 @@ const diaryContent = document.getElementById("diaryContent");
 const diaryFooter = document.getElementById("diaryFooter");
 const sourceLinks = document.getElementById("sourceLinks");
 
-// ─── Data Loading ───
+const searchToggle = document.getElementById("searchToggle");
+const searchOverlay = document.getElementById("searchOverlay");
+const searchInput = document.getElementById("searchInput");
+const searchResults = document.getElementById("searchResults");
+const searchClose = document.getElementById("searchClose");
+
+const prevYear = document.getElementById("prevYear");
+const nextYear = document.getElementById("nextYear");
+const contribYearInput = document.getElementById("contribYear");
+const contribToday = document.getElementById("contribToday");
+const contribGrid = document.getElementById("contribGrid");
+const contribTooltip = document.getElementById("contribTooltip");
+
 async function loadAllData() {
   try {
     const resp = await fetch(`${API_BASE}/api/diaries`);
     if (resp.ok) {
       const list = await resp.json();
+      diaryListData = list;
       diaryDates = list.map(d => d.date).sort().reverse();
-      // Preload a few recent diaries
       for (const item of list.slice(0, 5)) {
         try {
           const r = await fetch(`${API_BASE}/api/diary/${item.date}`);
@@ -46,14 +49,21 @@ async function loadAllData() {
     if (typeof DIARY_DATA !== 'undefined') {
       diaryDates = Object.keys(DIARY_DATA).sort().reverse();
       diaryCache = DIARY_DATA;
+      diaryListData = diaryDates.map(date => ({
+        date,
+        title: DIARY_DATA[date]?.title || "",
+        snippet: ""
+      }));
     }
   }
 
-  initCalendar();
+  const now = new Date();
+  contribYear = now.getFullYear();
+  contribYearInput.value = contribYear;
+
   const initialDate = loadFromUrl();
   currentDate = initialDate;
   selectDate(initialDate);
-  renderCalendar();
   initGitalk();
 }
 
@@ -82,7 +92,6 @@ async function fetchDiary(dateStr, signal) {
   return null;
 }
 
-// ─── Helpers ───
 function getTodayStr() {
   const d = new Date();
   return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
@@ -99,92 +108,100 @@ function getDiarySet() {
   return new Set(diaryDates);
 }
 
-// ─── Calendar ───
-let currentYear, currentMonth;
+function renderContributionGraph(year) {
+  const startDate = new Date(year, 0, 1);
+  const endDate = new Date(year, 11, 31);
+  const startDayOfWeek = startDate.getDay();
 
-function initCalendar() {
-  const now = new Date();
-  currentYear = now.getFullYear();
-  currentMonth = now.getMonth();
-}
+  const msPerDay = 24 * 60 * 60 * 1000;
+  const totalDays = Math.round((endDate - startDate) / msPerDay) + 1;
 
-function renderCalendar() {
-  calendarTitle.textContent = `${currentYear}年${currentMonth + 1}月`;
+  const totalCells = startDayOfWeek + totalDays;
+  const totalWeeks = Math.ceil(totalCells / 7);
 
-  const firstDay = new Date(currentYear, currentMonth, 1).getDay();
-  const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
-  const daysInPrev = new Date(currentYear, currentMonth, 0).getDate();
+  const cellDate = new Date(startDate);
+  cellDate.setDate(cellDate.getDate() - startDayOfWeek);
 
   const diarySet = getDiarySet();
-  let html = "";
+  let html = '';
 
-  // Previous month days
-  for (let i = firstDay - 1; i >= 0; i--) {
-    const day = daysInPrev - i;
-    const dateStr = `${prevMonthYear()}-${String(prevMonthNum()).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
-    html += `<div class="cal-day other-month ${diarySet.has(dateStr) ? 'has-diary' : ''}" data-date="${dateStr}">${day}</div>`;
+  for (let col = 0; col < totalWeeks; col++) {
+    for (let row = 0; row < 7; row++) {
+      const y = cellDate.getFullYear();
+      const m = String(cellDate.getMonth() + 1).padStart(2, '0');
+      const d = String(cellDate.getDate()).padStart(2, '0');
+      const dateStr = `${y}-${m}-${d}`;
+      const isInYear = y === year;
+      const hasDiary = diarySet.has(dateStr);
+      const isToday = dateStr === TODAY;
+
+      let cls = 'contrib-cell';
+      if (hasDiary) cls += ' has-diary';
+      if (!isInYear) cls += ' other-year';
+      if (isToday) cls += ' today-cell';
+
+      html += `<div class="${cls}" data-date="${dateStr}"></div>`;
+
+      cellDate.setDate(cellDate.getDate() + 1);
+    }
   }
 
-  // Current month days
-  for (let d = 1; d <= daysInMonth; d++) {
-    const dateStr = `${currentYear}-${String(currentMonth + 1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
-    const isToday = dateStr === TODAY;
-    const isSelected = dateStr === currentDate;
-    const hasDiary = diarySet.has(dateStr);
-    let cls = isToday ? "today" : "";
-    cls += isSelected ? " selected" : "";
-    cls += hasDiary ? " has-diary" : "";
-    html += `<div class="cal-day ${cls}" data-date="${dateStr}">${d}</div>`;
-  }
+  contribGrid.innerHTML = html;
 
-  // Next month days
-  const totalCells = firstDay + daysInMonth;
-  const remaining = (7 - totalCells % 7) % 7;
-  for (let d = 1; d <= remaining; d++) {
-    const dateStr = `${nextMonthYear()}-${String(nextMonthNum()).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
-    html += `<div class="cal-day other-month ${diarySet.has(dateStr) ? 'has-diary' : ''}" data-date="${dateStr}">${d}</div>`;
-  }
-
-  calendarGrid.innerHTML = html;
-
-  // Click handlers
-  document.querySelectorAll(".cal-day").forEach(el => {
+  contribGrid.querySelectorAll(".contrib-cell").forEach(el => {
     el.addEventListener("click", () => {
       const date = el.dataset.date;
       if (date) selectDate(date);
     });
-  });
 
-  function prevMonthYear() { return currentMonth === 0 ? currentYear - 1 : currentYear; }
-  function prevMonthNum() { return currentMonth === 0 ? 12 : currentMonth; }
-  function nextMonthYear() { return currentMonth === 11 ? currentYear + 1 : currentYear; }
-  function nextMonthNum() { return currentMonth === 11 ? 1 : currentMonth + 2; }
+    el.addEventListener("mouseenter", () => {
+      const date = el.dataset.date;
+      if (!date) return;
+      contribTooltip.textContent = formatDateDisplay(date);
+      const rect = el.getBoundingClientRect();
+      contribTooltip.style.left = `${rect.left + rect.width / 2}px`;
+      contribTooltip.style.top = `${rect.top}px`;
+      contribTooltip.style.display = "block";
+    });
+
+    el.addEventListener("mouseleave", () => {
+      contribTooltip.style.display = "none";
+    });
+  });
 }
 
-prevMonthBtn.addEventListener("click", () => {
-  currentMonth--;
-  if (currentMonth < 0) { currentMonth = 11; currentYear--; }
-  renderCalendar();
+prevYear.addEventListener("click", () => {
+  contribYear--;
+  contribYearInput.value = contribYear;
+  renderContributionGraph(contribYear);
 });
 
-nextMonthBtn.addEventListener("click", () => {
-  currentMonth++;
-  if (currentMonth > 11) { currentMonth = 0; currentYear++; }
-  renderCalendar();
+nextYear.addEventListener("click", () => {
+  contribYear++;
+  contribYearInput.value = contribYear;
+  renderContributionGraph(contribYear);
 });
 
-todayBtn.addEventListener("click", () => {
+contribYearInput.addEventListener("change", () => {
+  let val = parseInt(contribYearInput.value);
+  if (isNaN(val) || val < 2020) val = 2020;
+  if (val > 2030) val = 2030;
+  contribYear = val;
+  contribYearInput.value = contribYear;
+  renderContributionGraph(contribYear);
+});
+
+contribToday.addEventListener("click", () => {
   const now = new Date();
-  currentYear = now.getFullYear();
-  currentMonth = now.getMonth();
-  renderCalendar();
+  contribYear = now.getFullYear();
+  contribYearInput.value = contribYear;
+  renderContributionGraph(contribYear);
   selectDate(TODAY);
 });
 
-// ─── Select date and load diary ───
 async function selectDate(dateStr) {
   currentDate = dateStr;
-  renderCalendar();
+  renderContributionGraph(contribYear);
   showDiaryLoading();
   updateUrl(dateStr);
 
@@ -250,7 +267,6 @@ async function loadDiary(dateStr, signal) {
   }
 }
 
-// ─── Gitalk (site-wide) ───
 let gitalkInited = false;
 
 function initGitalk() {
@@ -272,7 +288,6 @@ function initGitalk() {
   });
   gitalk.render("gitalk-container");
 
-  // Debounce like button to prevent negative counts
   setTimeout(() => {
     document.querySelector(".gt-container")?.addEventListener("click", (e) => {
       const likeBtn = e.target.closest(".gt-comment-like");
@@ -289,7 +304,40 @@ function initGitalk() {
   }, 1500);
 }
 
-// ─── Search ───
+function openSearch() {
+  searchOverlay.classList.add("active");
+  setTimeout(() => searchInput.focus(), 100);
+}
+
+function closeSearch() {
+  searchOverlay.classList.remove("active");
+  searchInput.value = "";
+  searchResults.innerHTML = "";
+}
+
+searchToggle.addEventListener("click", openSearch);
+
+searchClose.addEventListener("click", closeSearch);
+
+searchOverlay.addEventListener("click", (e) => {
+  if (e.target === searchOverlay) closeSearch();
+});
+
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape" && searchOverlay.classList.contains("active")) {
+    closeSearch();
+  }
+  if (((e.metaKey || e.ctrlKey) && e.key === "k") && !searchOverlay.classList.contains("active")) {
+    e.preventDefault();
+    openSearch();
+  }
+  if (e.key === "/" && !searchOverlay.classList.contains("active") &&
+      !["INPUT", "TEXTAREA", "SELECT"].includes(e.target.tagName)) {
+    e.preventDefault();
+    openSearch();
+  }
+});
+
 searchInput.addEventListener("input", (e) => {
   const query = e.target.value.trim().toLowerCase();
   if (query.length < 1) {
@@ -298,10 +346,21 @@ searchInput.addEventListener("input", (e) => {
   }
 
   const results = [];
+  const seen = new Set();
+
+  for (const item of diaryListData) {
+    const searchText = (item.title + " " + item.snippet).toLowerCase();
+    if (searchText.includes(query)) {
+      seen.add(item.date);
+      results.push({ date: item.date, title: item.title, snippet: item.snippet });
+    }
+  }
+
   for (const [date, diary] of Object.entries(diaryCache)) {
+    if (seen.has(date)) continue;
     const searchText = (diary.title + " " + stripHtml(diary.content)).toLowerCase();
     if (searchText.includes(query)) {
-      results.push({ date, ...diary });
+      results.push({ date, title: diary.title, snippet: stripHtml(diary.content).substring(0, 80) });
     }
   }
 
@@ -310,21 +369,18 @@ searchInput.addEventListener("input", (e) => {
     return;
   }
 
-  searchResults.innerHTML = results.slice(0, 20).map(r => {
-    const snippet = stripHtml(r.content).substring(0, 80);
-    return `
-      <div class="search-result-item" data-date="${r.date}">
-        <div class="search-result-date">${r.date}</div>
-        <div class="search-result-title">${r.title}</div>
-        <div class="search-result-snippet">${snippet}...</div>
-      </div>`;
-  }).join("");
+  searchResults.innerHTML = results.slice(0, 20).map(r => `
+    <div class="search-result-item" data-date="${r.date}">
+      <div class="search-result-date">${r.date}</div>
+      <div class="search-result-title">${r.title}</div>
+      ${r.snippet ? `<div class="search-result-snippet">${r.snippet}...</div>` : ""}
+    </div>
+  `).join("");
 
-  document.querySelectorAll(".search-result-item").forEach(el => {
+  searchResults.querySelectorAll(".search-result-item").forEach(el => {
     el.addEventListener("click", () => {
       selectDate(el.dataset.date);
-      searchInput.value = "";
-      searchResults.innerHTML = "";
+      closeSearch();
     });
   });
 });
@@ -344,7 +400,6 @@ function renderContent(content) {
   return content.split(/\n\n+/).map(p => p.trim()).filter(Boolean).map(p => `<p>${p}</p>`).join("\n");
 }
 
-// ─── URL sync ───
 function updateUrl(dateStr) {
   const url = new URL(window.location);
   url.searchParams.set("date", dateStr);
@@ -359,7 +414,6 @@ function loadFromUrl() {
   return TODAY;
 }
 
-// ─── Theme ───
 const themeToggle = document.getElementById("themeToggle");
 
 function getPreferredTheme() {
@@ -387,5 +441,4 @@ window.matchMedia("(prefers-color-scheme: light)").addEventListener("change", (e
 
 applyTheme(getPreferredTheme());
 
-// ─── Init ───
 loadAllData();

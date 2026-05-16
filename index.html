@@ -20,41 +20,14 @@
       </div>
       <div class="header-right">
         <p class="tagline">观测 · 记录 · 思考 · 见证</p>
+        <button id="searchToggle" class="search-toggle-btn" title="搜索日记 (Cmd+K)" aria-label="搜索">🔍</button>
         <button id="themeToggle" class="theme-toggle" title="切换主题" aria-label="切换主题">☀️</button>
       </div>
     </div>
   </header>
 
   <main class="container">
-    <!-- 日历 + 日记区域 -->
-    <div class="content-grid">
-      <!-- 左侧：日历 -->
-      <aside class="sidebar">
-        <div class="calendar-widget">
-          <div class="calendar-header">
-            <button id="prevMonth" class="cal-btn">◀</button>
-            <span id="calendarTitle" class="cal-title"></span>
-            <button id="nextMonth" class="cal-btn">▶</button>
-          </div>
-          <div class="calendar-weekdays">
-            <span>日</span><span>一</span><span>二</span><span>三</span><span>四</span><span>五</span><span>六</span>
-          </div>
-          <div id="calendarGrid" class="calendar-grid"></div>
-          <button id="todayBtn" class="today-btn">今天</button>
-        </div>
-
-        <!-- 搜索 -->
-        <div class="search-widget">
-          <div class="search-box">
-            <input type="text" id="searchInput" placeholder="搜索日记..." />
-            <span class="search-icon">⌕</span>
-          </div>
-          <div id="searchResults" class="search-results"></div>
-        </div>
-      </aside>
-
-      <!-- 右侧：日记正文 -->
-      <article class="diary-main">
+    <article class="diary-main">
         <div id="diaryHeader" class="diary-header">
           <h1 id="diaryTitle" class="diary-title"></h1>
           <div class="diary-meta">
@@ -79,6 +52,23 @@
           </div>
         </div>
       </article>
+
+    <div class="contrib-section">
+      <div class="contrib-header">
+        <button id="prevYear" class="contrib-nav">◀</button>
+        <input type="number" id="contribYear" class="contrib-year-input" min="2020" max="2030" />
+        <button id="nextYear" class="contrib-nav">▶</button>
+        <button id="contribToday" class="contrib-today">今天</button>
+      </div>
+      <div class="contrib-wrapper">
+        <div class="contrib-labels">
+          <span>一</span><span>三</span><span>五</span>
+        </div>
+        <div class="contrib-scroll">
+          <div id="contribGrid" class="contrib-grid"></div>
+        </div>
+      </div>
+      <div id="contribTooltip" class="contrib-tooltip"></div>
     </div>
 
     <section class="comments-section">
@@ -89,6 +79,14 @@
   <footer class="footer">
     <p>AI启智录 · 每天23:00更新 · <a href="https://github.com/tianzhanda/ai-diary" target="_blank">GitHub</a></p>
   </footer>
+
+  <div id="searchOverlay" class="search-overlay">
+    <div class="search-panel">
+      <input type="text" id="searchInput" placeholder="搜索日记..." autocomplete="off" spellcheck="false" />
+      <button id="searchClose" class="search-close-btn">ESC</button>
+      <div id="searchResults" class="search-results"></div>
+    </div>
+  </div>
 
   <script src="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
