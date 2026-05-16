@@ -173,7 +173,6 @@ function renderContributionGraph(year) {
 window.addEventListener("scroll", () => {
   contribTooltip.style.display = "none";
 }, { passive: true });
-}
 
 prevYear.addEventListener("click", () => {
   contribYear--;
@@ -344,6 +343,11 @@ searchInput.addEventListener("input", (e) => {
   const query = e.target.value.trim().toLowerCase();
   if (query.length < 1) {
     searchResults.innerHTML = "";
+    return;
+  }
+
+  if (diaryListData.length === 0 && Object.keys(diaryCache).length === 0) {
+    searchResults.innerHTML = `<div class="search-empty">正在加载搜索索引...</div>`;
     return;
   }
 
