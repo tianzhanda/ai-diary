@@ -911,6 +911,40 @@ body {
   border-radius: var(--radius-lg);
   padding: 24px 32px;
   box-shadow: var(--shadow-sm);
+  border-top: 2px solid rgba(0, 214, 143, 0.12);
+}
+
+.comments-header {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.comments-title {
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  letter-spacing: 2px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.comments-title::before {
+  content: '';
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--accent-green);
+  flex-shrink: 0;
+}
+
+.comments-title::after {
+  content: '';
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--accent-green);
+  flex-shrink: 0;
 }
 
 .gitalk-container {
@@ -1004,9 +1038,15 @@ body {
   color: var(--accent-green);
   font-weight: 600;
   text-decoration: none;
+  display: inline-block;
+  padding: 5px 16px;
+  border: 1px solid var(--accent-green);
+  border-radius: 20px;
+  transition: all var(--transition);
 }
 .gt-container .gt-link-login:hover {
-  text-decoration: underline;
+  background: rgba(0, 214, 143, 0.06);
+  text-decoration: none;
 }
 
 .gt-container .gt-user-infos {
@@ -1084,9 +1124,21 @@ body {
 .gt-container .gt-comment {
   margin-bottom: 14px;
   padding: 12px 0;
+  transition: background var(--transition);
+  border-radius: var(--radius-sm);
+  margin-left: -8px;
+  margin-right: -8px;
+  padding-left: 8px;
+  padding-right: 8px;
 }
 .gt-container .gt-comment:not(:last-child) {
   border-bottom: 1px solid var(--border-subtle);
+}
+
+@media (hover: hover) {
+  .gt-container .gt-comment:hover {
+    background: rgba(0, 214, 143, 0.03);
+  }
 }
 .gt-container .gt-comment-body {
   margin-left: 42px;
@@ -1235,6 +1287,20 @@ body {
   display: none;
 }
 
+[data-theme="light"] .comments-section {
+  border-top-color: rgba(5, 150, 105, 0.12);
+}
+
+[data-theme="light"] .gt-link-login:hover {
+  background: rgba(5, 150, 105, 0.06);
+}
+
+@media (hover: hover) {
+  [data-theme="light"] .gt-container .gt-comment:hover {
+    background: rgba(5, 150, 105, 0.03);
+  }
+}
+
 [data-theme="light"] .gt-container .gt-header textarea {
   border-color: var(--border-medium);
 }
@@ -1324,6 +1390,14 @@ body {
 
   .comments-section {
     padding: 16px 14px;
+  }
+
+  .comments-header {
+    margin-bottom: 14px;
+  }
+
+  .comments-title {
+    font-size: 0.7rem;
   }
 
   .gt-container .gt-comment-body {
