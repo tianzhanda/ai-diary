@@ -243,7 +243,7 @@ body {
 
 /* ============ DIARY MAIN ============ */
 .diary-main {
-  max-width: 780px;
+  max-width: 1000px;
   margin: 0 auto;
   background: var(--bg-card);
   border-radius: var(--radius-lg);
@@ -301,7 +301,7 @@ body {
 /* ── Diary Content Typography ── */
 .diary-content {
   font-family: var(--font-sans);
-  font-size: 0.95rem;
+  font-size: 1rem;
   line-height: 1.9;
   color: var(--text-primary);
   animation: contentFadeIn 0.35s ease-out;
@@ -519,7 +519,7 @@ body {
 
 /* ============ CONTRIBUTION GRAPH ============ */
 .contrib-section {
-  max-width: 780px;
+  max-width: 1000px;
   margin: 32px auto 0;
   background: var(--bg-card);
   border-radius: var(--radius-lg);
@@ -905,7 +905,7 @@ body {
 
 /* ============ COMMENTS (Gitalk) ============ */
 .comments-section {
-  max-width: 780px;
+  max-width: 1000px;
   margin: 28px auto 0;
   background: var(--bg-card);
   border-radius: var(--radius-lg);
@@ -1073,7 +1073,7 @@ body {
 .gt-container .markdown-body {
   color: var(--text-primary);
   font-family: var(--font-sans);
-  font-size: 0.85rem;
+  font-size: 1rem;
 }
 .gt-container .markdown-body a {
   color: var(--accent-blue);
@@ -1188,7 +1188,7 @@ body {
 
 .gt-container .gt-comment-text {
   font-family: var(--font-sans);
-  font-size: 0.85rem;
+  font-size: 1rem;
   line-height: 1.7;
   color: var(--text-primary);
   margin: 5px 0 6px;
@@ -1386,7 +1386,7 @@ body {
   }
 
   .diary-content {
-    font-size: 0.88rem;
+    font-size: 0.95rem;
     line-height: 1.8;
   }
 
