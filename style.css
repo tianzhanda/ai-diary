@@ -114,16 +114,6 @@
   box-shadow: var(--shadow-sm);
 }
 
-[data-theme="light"] .search-toggle-btn {
-  color: var(--text-muted);
-  border-color: var(--border-medium);
-}
-
-[data-theme="light"] .search-toggle-btn:hover {
-  color: var(--accent-green);
-  border-color: rgba(5, 150, 105, 0.2);
-}
-
 *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
 body {
@@ -202,50 +192,23 @@ body {
   gap: 8px;
 }
 
-.search-toggle-btn {
-  background: transparent;
-  border: 1px solid var(--border-medium);
-  color: var(--text-secondary);
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  cursor: pointer;
-  font-size: 0.85rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all var(--transition);
-  flex-shrink: 0;
-  line-height: 1;
-  padding: 0;
-}
-
-.search-toggle-btn:hover {
-  border-color: var(--accent-green);
-  color: var(--accent-green);
-}
-
+.search-toggle-btn,
 .theme-toggle {
-  background: transparent;
+  background: none;
   border: 1px solid var(--border-medium);
+  border-radius: 6px;
   color: var(--text-secondary);
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
   cursor: pointer;
-  font-size: 1rem;
+  padding: 6px 10px;
   display: flex;
   align-items: center;
-  justify-content: center;
   transition: all var(--transition);
-  flex-shrink: 0;
-  line-height: 1;
-  padding: 0;
 }
 
+.search-toggle-btn:hover,
 .theme-toggle:hover {
-  border-color: var(--accent-green);
   color: var(--accent-green);
+  border-color: rgba(0, 214, 143, 0.2);
 }
 
 /* ============ LAYOUT ============ */
@@ -286,6 +249,7 @@ body {
 .diary-meta {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 6px;
 }
 
@@ -506,6 +470,7 @@ body {
 .contrib-header {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 8px;
   margin-bottom: 14px;
 }
@@ -558,23 +523,6 @@ body {
   border-color: var(--accent-green);
 }
 
-.contrib-today {
-  background: transparent;
-  border: 1px solid var(--border-medium);
-  color: var(--text-secondary);
-  padding: 3px 14px;
-  border-radius: 20px;
-  cursor: pointer;
-  font-family: var(--font-mono);
-  font-size: 0.65rem;
-  transition: all var(--transition);
-  margin-left: auto;
-}
-
-.contrib-today:hover {
-  border-color: var(--accent-green);
-  color: var(--accent-green);
-}
 
 .contrib-wrapper {
   display: flex;
