@@ -301,7 +301,7 @@ body {
 /* ── Diary Content Typography ── */
 .diary-content {
   font-family: var(--font-sans);
-  font-size: 1rem;
+  font-size: 1.3rem;
   line-height: 1.9;
   color: var(--text-primary);
   animation: contentFadeIn 0.35s ease-out;
