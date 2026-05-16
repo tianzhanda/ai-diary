@@ -181,7 +181,7 @@ function renderContributionGraph(year) {
   });
 
   renderMonthLabels(year, startDayOfWeek, totalWeeks);
-  contribStats.innerHTML = `<strong>${diaryCount}</strong> 天在本年有记录`;
+  contribStats.innerHTML = `已记录 <strong>${diaryDates.length}</strong> 天`;
 }
 
 function renderMonthLabels(year, startDayOfWeek, totalWeeks) {
