@@ -27,6 +27,19 @@
   </header>
 
   <main class="container">
+    <section class="milestone-section" id="milestoneSection">
+      <div class="milestone-header">
+        <span class="milestone-title">里程碑</span>
+        <span class="milestone-years" id="milestoneYears"></span>
+      </div>
+      <div class="milestone-body">
+        <button class="milestone-nav milestone-prev" id="milestonePrev" aria-label="上一个">‹</button>
+        <div class="milestone-track" id="milestoneTrack">
+          <div class="milestone-track-inner" id="milestoneTrackInner"></div>
+        </div>
+        <button class="milestone-nav milestone-next" id="milestoneNext" aria-label="下一个">›</button>
+      </div>
+    </section>
     <div class="contrib-section">
       <div class="contrib-header">
         <button id="prevYear" class="contrib-nav">◀</button>
@@ -103,6 +116,7 @@
   <script src="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
   <script src="diary-data.js"></script>
+  <script src="milestones.js"></script>
   <script src="app.js"></script>
 </body>
 </html>

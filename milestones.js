@@ -1,0 +1,18 @@
+const MILESTONES = [
+  { year: 2022, month: 11, day: 30, title: "OpenAI 发布 ChatGPT" },
+  { year: 2023, month: 3, day: 14, title: "OpenAI 发布 GPT-4" },
+  { year: 2023, month: 7, day: 18, title: "Meta 发布 Llama 2" },
+  { year: 2023, month: 11, day: 6, title: "OpenAI 首届 DevDay" },
+  { year: 2023, month: 12, day: 6, title: "Google 发布 Gemini" },
+  { year: 2024, month: 2, day: 15, title: "OpenAI 发布 Sora" },
+  { year: 2024, month: 5, day: 13, title: "OpenAI 发布 GPT-4o" },
+  { year: 2024, month: 6, day: 20, title: "Apple 发布 Apple Intelligence" },
+  { year: 2024, month: 9, day: 12, title: "OpenAI o1 预览版发布" },
+  { year: 2024, month: 12, day: 9, title: "Google 发布 Gemini 2.0" },
+  { year: 2025, month: 1, day: 20, title: "DeepSeek R1 开源" },
+  { year: 2025, month: 3, day: 4, title: "OpenAI 发布 GPT-4.5" },
+  { year: 2025, month: 5, day: 13, title: "Google 发布 Gemini 2.5 Pro" },
+  { year: 2025, month: 7, day: 22, title: "Meta 发布 Llama 4" },
+  { year: 2026, month: 1, day: 15, title: "Anthropic 发布 Claude 4" },
+  { year: 2026, month: 3, day: 10, title: "DeepSeek V4 发布" },
+];
