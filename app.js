@@ -170,6 +170,11 @@ function renderContributionGraph(year) {
   });
 }
 
+window.addEventListener("scroll", () => {
+  contribTooltip.style.display = "none";
+}, { passive: true });
+}
+
 prevYear.addEventListener("click", () => {
   contribYear--;
   contribYearInput.value = contribYear;
