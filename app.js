@@ -7,6 +7,7 @@ let diaryDates = [];
 let diaryListData = [];
 let loadAbort = null;
 let apiAvailable = true;
+let milestonesCache = [];
 let contribYear;
 
 const diaryTitle = document.getElementById("diaryTitle");
@@ -63,10 +64,26 @@ async function loadAllData() {
   contribYear = now.getFullYear();
   contribYearInput.value = contribYear;
 
+  await fetchMilestones();
+
   const initialDate = loadFromUrl();
   currentDate = initialDate;
   selectDate(initialDate);
   initGitalk();
+}
+
+async function fetchMilestones() {
+  try {
+    const resp = await fetch(`${API_BASE}/api/milestones`);
+    if (resp.ok) {
+      milestonesCache = await resp.json();
+    } else {
+      throw new Error("API error");
+    }
+  } catch (e) {
+    console.warn("Milestones API unavailable, using fallback data");
+  }
+  renderMilestones();
 }
 
 async function fetchDiary(dateStr, signal) {
@@ -492,7 +509,8 @@ function renderMilestones() {
   const section = document.getElementById('milestoneSection');
   const inner = document.getElementById('milestoneTrackInner');
 
-  if (typeof MILESTONES === 'undefined' || !MILESTONES || MILESTONES.length === 0) {
+  const data = milestonesCache.length > 0 ? milestonesCache : (typeof MILESTONES !== 'undefined' ? MILESTONES : []);
+  if (data.length === 0) {
     section.style.display = 'none';
     return;
   }
@@ -500,7 +518,7 @@ function renderMilestones() {
 
   let html = '';
   let lastYear = null;
-  MILESTONES.forEach((m, i) => {
+  data.forEach((m, i) => {
     if (lastYear === null || m.year !== lastYear) {
       html += `<div class="milestone-year-mark" data-year="${m.year}"><div class="milestone-year-bar"></div><span class="milestone-year-label">${m.year}</span></div>`;
     }
